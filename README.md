@@ -1,18 +1,28 @@
-# scooterok
+# Angle2
 
-> A Vue.js project
+> Transforming business ideas into beautiful digital experiences
 
-## Build Setup
+## Things we do with great skill and passion
 
 ``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
+ - Fascinating interfaces
+ - Prototypes
+ - User experience design
+ - User interface development
+ - Markup
+ - Coding
+ - Field testing
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# Your all-time benefits with us
+Exceptional skills blended with cutting-edge tools
+Our team will brainstorm, discuss, plan, build and develop until the last cup of coffee left in our office – and long past that. We love challenges and we know how to help our customers solve them.
+
+A problem-solving approach to your needs 
+We commit ourselves to following the most effective framework – analyzing tasks, finding key problems, hypothesizing and testing to find a 100% perfect solution just for you.
+
+Ready to go an extra mile for our customers 
+We aspire to study ideas and problems from your perspective and put ourselves in your shoes. Whether you are a startup founder, product or project manager or marketer, we will dig deep into your needs.
+
+Caring about your KPIs and brand image
+The best interface is the one that helps your business thrive. We know how to build a digital experience that will boost your sales and reinforce your brand image.
