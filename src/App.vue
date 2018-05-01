@@ -1,0 +1,420 @@
+<template>
+    <div id="app" @mousemove="cursorRing">      
+        <svg class="cursor-ring" width="60" height="60">
+            <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
+        </svg>
+        <div class="preloader">
+            <div>
+              <span>{{preloaderPercent}}%</span>  
+            </div>            
+        </div>
+        <header>
+            <div class="logo">
+                <a href=""><img src="./assets/img/logo_Angle2.svg"></a>
+            </div>
+            <nav class="clearfix">
+                <div class="process">
+                    <a href="" @mouseenter="hover">Process</a>
+                </div>
+                <div class="projects">
+                    <a href="">Projects</a>
+                </div>
+                <div class="contact">
+                    <a href="">Contact Us</a>
+                </div>                
+            </nav>
+            <div class="lng">
+              <a href="">Ukr</a>
+            </div>
+        </header>        
+        <components :is="global.currentComponent" :mouseX="global.mouseX"></components>
+        <div class="g-pager">
+          <div>
+            <span>{{global.pager}}</span><b>04</b>
+          </div>            
+        </div>
+        <div class="go-tonext" ref="goTonext">
+          <div>
+            <span>go play</span>
+          </div>
+          <div>
+            <span>outside</span>
+          </div>          
+        </div>
+        <div class="dda" ref="dda">            
+          <div>
+            <span>digital</span>
+          </div>
+          <div>
+            <span>design</span>
+          </div>
+          <div>
+            <span>agency</span>
+          </div>          
+        </div>    
+        <div class="follow-us">
+            <div class="follow-us_title">
+              <span>Follow Us</span>
+            </div>
+            <ul class="clearfix">
+                <li class="be">
+                    <a href="">
+                        <svg version="1.1" id="behance-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="22px" height="14px" viewBox="0 0 22 14" style="enable-background:new 0 0 22 14;" xml:space="preserve">
+                        <path class="st0" d="M6.2,0.3c0.6,0,1.2,0.1,1.7,0.2s1,0.3,1.3,0.5c0.4,0.3,0.7,0.6,0.9,1s0.3,0.9,0.3,1.5c0,0.7-0.1,1.2-0.5,1.7C9.7,5.7,9.2,6,8.6,6.3c0.8,0.2,1.4,0.6,1.8,1.2C10.8,8.1,11,8.8,11,9.6c0,0.7-0.1,1.2-0.4,1.7c-0.3,0.5-0.6,0.9-1,1.2S8.7,13,8.1,13.2c-0.6,0.1-1.1,0.2-1.7,0.2H0V0.3H6.2z M5.8,5.6c0.5,0,0.9-0.1,1.3-0.4C7.5,5,7.6,4.6,7.6,4c0-0.3-0.1-0.6-0.2-0.8C7.3,3.1,7.2,2.9,7,2.8C6.8,2.7,6.6,2.6,6.4,2.6S5.9,2.5,5.7,2.5H2.9v3.1H5.8z M6,11.2c0.3,0,0.6,0,0.8-0.1C7.1,11,7.3,11,7.5,10.8c0.2-0.1,0.4-0.3,0.5-0.5c0.1-0.2,0.2-0.5,0.2-0.9C8.1,8.8,8,8.3,7.6,8S6.7,7.6,6.1,7.6H2.9v3.6H6z"/>
+                        <path class="st0" d="M15.7,11.2c0.4,0.4,1,0.6,1.7,0.6c0.5,0,1-0.1,1.4-0.4c0.4-0.3,0.6-0.6,0.7-0.8h2.3c-0.4,1.1-0.9,2-1.7,2.5c-0.8,0.5-1.7,0.7-2.8,0.7c-0.8,0-1.4-0.1-2-0.4c-0.6-0.2-1.1-0.6-1.5-1s-0.7-1-1-1.6c-0.2-0.6-0.3-1.3-0.3-2s0.1-1.4,0.4-2c0.2-0.6,0.6-1.2,1-1.6c0.4-0.5,0.9-0.8,1.5-1.1s1.3-0.4,2-0.4c0.8,0,1.5,0.2,2.1,0.5s1.1,0.7,1.5,1.3c0.4,0.5,0.7,1.1,0.8,1.8C22,7.9,22,8.6,22,9.3h-6.9C15.1,10.1,15.3,10.8,15.7,11.2z M18.8,6.2c-0.3-0.3-0.8-0.5-1.5-0.5c-0.4,0-0.8,0.1-1,0.2C16,6,15.7,6.2,15.6,6.4c-0.2,0.2-0.3,0.4-0.4,0.7c-0.1,0.2-0.1,0.4-0.1,0.6h4.3C19.3,7,19.1,6.5,18.8,6.2z"/>
+                        <rect x="14.6" y="1" class="st0" width="5.3" height="1.3"/></svg>
+                    </a>
+                </li>
+                <li class="dr">
+                    <a href="">
+                        <svg version="1.1" id="dribbble" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+                            <g>
+                                <path class="st0" d="M8,0C3.6,0,0,3.6,0,8s3.6,8,8,8s8-3.6,8-8S12.4,0,8,0z M8,1.4c1.5,0,2.9,0.5,4,1.4c-0.8,1-1.9,1.9-3.3,2.5
+                                C8,4,7.3,2.8,6.4,1.6C6.9,1.5,7.4,1.4,8,1.4z M5,2.1c0.9,1.2,1.7,2.4,2.4,3.6C5.8,6.2,3.8,6.4,1.6,6.4C2,4.5,3.3,3,5,2.1z M1.4,8
+                                V7.8C4,7.8,6.2,7.5,8,6.9c0.2,0.3,0.3,0.6,0.4,1c-2.2,0.7-4,2.1-5.5,4.3C2,11.1,1.4,9.6,1.4,8z M3.9,13.2c1.3-2.1,3-3.4,5.1-4
+                                c0.6,1.6,1.1,3.3,1.4,5C8.1,15,5.7,14.6,3.9,13.2z M11.7,13.5c-0.3-1.6-0.7-3.1-1.3-4.6C11.6,8.7,13,8.8,14.5,9
+                                C14.2,10.9,13.2,12.5,11.7,13.5z M9.9,7.6C9.7,7.2,9.5,6.8,9.3,6.5c1.5-0.7,2.8-1.6,3.7-2.7c0.9,1.1,1.5,2.4,1.5,3.9
+                                C12.9,7.3,11.3,7.3,9.9,7.6z"/>
+                            </g>
+                        </svg>
+                    </a>
+                </li>
+                <li class="fb">
+                    <a href="">            
+                        <svg version="1.1" id="facebook" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="9px" height="16px" viewBox="0 0 9 16" style="enable-background:new 0 0 9 16;" xml:space="preserve">
+                            <g>
+                                <path id="f_1_" class="st0" d="M5.7,16V8.7h2.4l0.4-2.8H5.7V4c0-0.8,0.2-1.4,1.4-1.4h1.5V0.1C8.4,0.1,7.5,0,6.5,0
+                                C4.3,0,2.8,1.3,2.8,3.8v2.1H0.3v2.8h2.5V16H5.7z"/>
+                            </g>
+                        </svg>
+                    </a>
+                </li>
+                <li class="ig">
+                    <a href="">
+                        <svg version="1.1" id="instagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+                            <g>
+                                <defs>
+                                    <rect id="SVGID_1_" width="16" height="16"/>
+                                </defs>
+                                <clipPath id="SVGID_2_">
+                                    <use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+                                </clipPath>
+                                <path class="st0" d="M8,1.4c2.1,0,2.4,0,3.2,0c0.8,0,1.2,0.2,1.5,0.3c0.4,0.1,0.6,0.3,0.9,0.6c0.3,0.3,0.5,0.5,0.6,0.9
+                                c0.1,0.3,0.2,0.7,0.3,1.5c0,0.8,0,1.1,0,3.2c0,2.1,0,2.4,0,3.2c0,0.8-0.2,1.2-0.3,1.5c-0.1,0.4-0.3,0.6-0.6,0.9
+                                c-0.3,0.3-0.5,0.5-0.9,0.6c-0.3,0.1-0.7,0.2-1.5,0.3c-0.8,0-1.1,0-3.2,0c-2.1,0-2.4,0-3.2,0c-0.8,0-1.2-0.2-1.5-0.3
+                                c-0.4-0.1-0.6-0.3-0.9-0.6c-0.3-0.3-0.5-0.5-0.6-0.9c-0.1-0.3-0.2-0.7-0.3-1.5c0-0.8,0-1.1,0-3.2c0-2.1,0-2.4,0-3.2
+                                c0-0.8,0.2-1.2,0.3-1.5c0.1-0.4,0.3-0.6,0.6-0.9c0.3-0.3,0.5-0.5,0.9-0.6C3.6,1.7,4,1.5,4.8,1.5C5.6,1.4,5.9,1.4,8,1.4 M8,0
+                                C5.8,0,5.6,0,4.7,0c-0.9,0-1.4,0.2-1.9,0.4c-0.5,0.2-1,0.5-1.4,0.9C0.9,1.8,0.6,2.2,0.4,2.8C0.2,3.3,0.1,3.9,0,4.7C0,5.6,0,5.8,0,8
+                                c0,2.2,0,2.4,0,3.3c0,0.9,0.2,1.4,0.4,1.9c0.2,0.5,0.5,1,0.9,1.4c0.4,0.4,0.9,0.7,1.4,0.9c0.5,0.2,1.1,0.3,1.9,0.4
+                                c0.9,0,1.1,0,3.3,0c2.2,0,2.4,0,3.3,0c0.9,0,1.4-0.2,1.9-0.4c0.5-0.2,1-0.5,1.4-0.9c0.4-0.4,0.7-0.9,0.9-1.4
+                                c0.2-0.5,0.3-1.1,0.4-1.9c0-0.9,0-1.1,0-3.3c0-2.2,0-2.4,0-3.3c0-0.9-0.2-1.4-0.4-1.9c-0.2-0.5-0.5-1-0.9-1.4
+                                c-0.4-0.4-0.9-0.7-1.4-0.9c-0.5-0.2-1.1-0.3-1.9-0.4C10.4,0,10.2,0,8,0"/>
+                                <path class="st0" d="M8,3.9C5.7,3.9,3.9,5.7,3.9,8c0,2.3,1.8,4.1,4.1,4.1c2.3,0,4.1-1.8,4.1-4.1C12.1,5.7,10.3,3.9,8,3.9 M8,10.7
+                                c-1.5,0-2.7-1.2-2.7-2.7c0-1.5,1.2-2.7,2.7-2.7c1.5,0,2.7,1.2,2.7,2.7C10.7,9.5,9.5,10.7,8,10.7"/>
+                                <path class="st0" d="M13.2,3.7c0,0.5-0.4,1-1,1c-0.5,0-1-0.4-1-1c0-0.5,0.4-1,1-1C12.8,2.8,13.2,3.2,13.2,3.7"/>
+                            </g>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>    
+</template>
+
+<script>
+import Start from './Start.vue';
+export default {
+    name: 'app',  
+    mounted : function () {
+        var comp = this;
+        TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng',  document.querySelectorAll('.follow-us li')], { y: 30});
+        TweenMax.set('.follow-us_title span', { y: 10});
+        TweenMax.set('.g-pager div', { x: -35});
+        TweenMax.set(['header', '.g-pager', '.follow-us'], {opacity : 1});
+        TweenMax.set('.cursor-ring', {x : (window.innerWidth / 2) - 30, y : (window.innerHeight / 2) -30});        
+        TweenMax.set([comp.$refs.dda.querySelectorAll('span'), comp.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px'}});
+        TweenMax.set([comp.$refs.dda.querySelectorAll('span'), comp.$refs.goTonext.querySelectorAll('span')], {y : 12, opacity : 1});
+        TweenMax.to('.preloader', 1.3, { height: '50%', ease: Power1.easeOut, onComplete : function(){
+            TweenMax.to('.cursor-ring circle', 0.7, {css : {'stroke-dashoffset':'0'}, onComplete : function(){
+              comp.cursor.initDone = true;
+              TweenMax.to(comp.$data, 1.3, { preloaderNumber : 100, ease: Power1.easeOut});                            
+              TweenMax.to([comp.$refs.dda.querySelectorAll('span'), comp.$refs.goTonext.querySelectorAll('span')], 1, {y : 0, ease: Power1.easeOut});
+              TweenMax.to('.preloader', 1.3, { height: '100%', ease: Power1.easeOut, onComplete : function(){
+                TweenMax.to('.preloader span', 1.3, {y : 50});
+                comp.global.currentComponent = 'app-start';
+                TweenMax.set([comp.$refs.dda.querySelectorAll('span'), comp.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px'}});
+                TweenMax.to('.preloader', 1.3, {height: 90, y : -70, ease: Power1.easeOut, onComplete : function(){                                                
+                  TweenMax.to('.g-pager div', 0.7, {x : 0});
+                  TweenMax.to('.follow-us_title span', 0.7, {y : 0, onComplete : function(){
+                    TweenMax.staggerTo(['.logo', 'header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
+                    TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
+                  }});
+                }});
+              }});
+            }});
+        }});
+        TweenMax.to(comp.$data, 1.3, { preloaderNumber : 50, ease: Power1.easeOut});
+    },  
+    components : {
+        'app-start' : Start
+    },
+    computed: {
+        preloaderPercent: function() {
+            return this.preloaderNumber.toFixed(0);
+        }
+    },
+    methods : {
+        scooterok : function(e){
+            console.log('scooterok');
+            e.preventDefault()
+        },
+        cursorRing : function(e){            
+          this.global.mouseX = e.pageX;
+          if(this.cursor.initDone){
+            TweenMax.to('.cursor-ring', 0.5, {x : (e.clientX - 30), y : (e.clientY - 30)});
+          }          
+        },
+        hover : function(){
+            console.log('HOVER');
+        }
+    },
+    data () {
+        return {
+            preloaderNumber : 0,
+            msg: 'Welcome to Your Vue.js App',
+            global : {
+                currentComponent : '',
+                pager : '01',
+                mouseX : 0
+            },
+            cursor : {
+                initDone : false,
+                click : ''
+            }
+        }
+    }
+}
+</script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+  z-index: 11;
+  position: relative;
+}
+b {
+  font-weight: 800;
+}
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.cursor-ring {
+    z-index: 1;
+    position: fixed;    
+}
+.cursor-ring circle {
+    stroke: #b6b6b6;
+    stroke-dasharray : 150.796;
+    stroke-dashoffset : 150.796;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.preloader {
+    width: 1px;
+    height: 0%;
+    background-color: #000;
+    position: fixed;
+    bottom: 0;
+    left: 50%; 
+    margin-left: -1px;   
+    z-index: 1;
+}
+.preloader div {
+    overflow: hidden;
+    position: absolute;
+    top: 30px;
+    right: -2px;
+    transform: rotate(-90deg);
+}
+.preloader span {
+    display: block;        
+    font-size: 12px;
+}
+
+#app {
+  font-family: 'Montserrat', sans-serif;  
+  color: #1d1d1d;
+  width: 100%;
+  height: 100%;  
+}
+header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0 70px;
+  z-index: 5;
+  opacity: 0;
+  overflow: hidden;
+}
+header .logo {
+  margin-top: 60px;
+  float: left;  
+}
+header .logo img {
+  width: 126px;
+  height: 21px;
+}
+header nav {    
+    margin-top: 66px;
+    position: absolute;
+    left: 50%;    
+}
+header nav div {
+  float: left;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 300;
+  margin-left: 3.6vw;
+  letter-spacing: -0.5px;
+}
+header nav div:first-child {
+  margin-left: 0;
+}
+header .lng {
+  position: absolute;
+  margin-top: 66px;
+  right: 70px;
+}
+header a {
+  color: #1d1d1d;
+}
+
+.g-pager {
+  font-size: 10px;
+  line-height: 12px;
+  overflow: hidden;
+  transform: rotate(270deg);  
+  position: fixed;
+  bottom: 79px;
+  left: 60px;
+  z-index: 5;
+  opacity: 0;
+  overflow: hidden;
+}
+.g-pager span {
+  display: inline-block;
+  margin-right: 6px;
+  float: left;
+}
+.g-pager b {
+  display: inline-block;
+}
+.dda {
+  width: 56px;
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  transform: rotate(270deg);
+  position: fixed;
+  left: 59px;
+  top: 141px;
+  letter-spacing: -0.2px;
+  z-index: 5;    
+}
+.dda > div {
+  overflow: hidden;
+  width: 200px;  
+}
+.dda > div > span {
+  display: block;
+  opacity: 0;
+  transition: letter-spacing 1.3s ease;
+}
+.go-tonext {
+  width: 200px;
+  font-size: 10px;
+  line-height: 12px;  
+  position: fixed;
+  bottom: 158px;
+  left: 50%;
+  font-weight: 400;
+  text-transform: uppercase;
+  transform: rotate(270deg);
+  margin-left: -117px;
+  padding-bottom: 0px;
+  cursor: pointer;
+  z-index: 4;
+}
+.go-tonext > div {
+  overflow: hidden;
+}
+.go-tonext > div > span {
+  display: block;
+  opacity: 1;
+  transition: letter-spacing 1.3s ease;
+}
+.follow-us {
+  position: fixed;
+  right: 70px;
+  bottom: 70px;
+  z-index: 5;
+  opacity: 0;
+  overflow: hidden;
+}
+.follow-us_title {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: right;
+  overflow: hidden;
+}
+.follow-us_title span {
+  display: block;
+}
+.follow-us ul {
+  list-style: none;
+  margin: 20px 0 0 0;
+  padding: 0;
+}
+.follow-us ul li {
+  float: left;
+  margin-left: 24px;
+}
+#behance-logo {
+  width: 22px;
+  height: 14px;
+}
+#dribbble {
+  width: 16px;
+  height: 16px;
+}
+#facebook {
+  width: 9px;
+  height: 16px;
+}
+#instagram {
+  width: 16px;
+  height: 16px;
+}
+#behance-logo .st0,
+#dribbble .st0,
+#facebook .st0,
+#instagram .st0 {
+  fill:#1D1D1D;
+}
+
+</style>
