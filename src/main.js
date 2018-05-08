@@ -8,8 +8,8 @@ import Process from './Process.vue';
 Vue.use(VueRouter);
 router = new VueRouter({	
 	routes : [
-		{path: '/', name : 'Home', component : Start },
-		{path: '/process', name : 'Process', component : Process },
+		{path: '/', name : 'home', component : Start },
+		{path: '/process', name : 'process', component : Process },
 	]
 });
 

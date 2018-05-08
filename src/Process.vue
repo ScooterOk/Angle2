@@ -1,5 +1,5 @@
 <template>
-  <div id="app-start">
+  <div id="app-process" v-resize="onResize" @mousewheel="mousewheel">
       <ul class="text">
         <li class="left">
           <div class="text-wrapper">
@@ -44,13 +44,10 @@
           </div>
         </li>
       </ul>
-      <section class="tab-description">                  
-        <div class="tab-description__text">
-          <components ref="currentComponent" :msg="tabs.ux.text" :is="currentTab"></components>
-        </div>      
-        
+      <section class="tab-description" v-show="tabs.current.show">
+        <scrollbar ref="scrollbar" :msg="tabs.current.text" v-if="tabs.current.showText"></scrollbar>
         <div class="tab-description__link">
-          <a href="" v-html="tabLinkText"></a>
+          <a :href="tabs.current.linkHref" v-html="tabLinkText"></a>
           <i class="tab-description__link_border"></i>
         </div>
         <div class="tab-description__close" @click="closeTabs"><i class="l"></i><i class="r"></i></div>
@@ -59,11 +56,15 @@
 </template>
 
 <script>
+import resize from 'vue-resize-directive';
 import Vue2Scrollbar from './Scroller.vue';
 export default {
   props : ['mouseX'],
   components: {
-      'ux': Vue2Scrollbar
+      'scrollbar': Vue2Scrollbar
+    },
+    directives: {
+        resize
     },
   mounted : function () {    
     this.enter();
@@ -75,16 +76,39 @@ export default {
       tabsActive : false,
       tabsanimated : false,
       currentTab : '',
+      winWidth : 0,      
       tabs : {
         current : {
-          text : '',
+          show : false,
+          showText : false,
+          text : '',          
           linkText : '',
           linkHref : ''
+        },
+        dash : {
+          x : 0,
+          y : 0 
         },
         ux : {
           text : 'User Experience (UX) refers to a person\'s emotions and attitudes about using a particular product, system or service. It includes the practical, experiential, affective, meaningful and valuable aspects of human–computer interaction and product ownership. Additionally, it includes a person’s perceptions of system aspects such as utility, ease of use and efficiency. <br/> <br/> User experience may be considered subjective in nature to the degree that it is about individual perception and thought with respect to the system. User experience is dynamic as it is constantly modified over time due to changing usage circumstances and changes to individual systems as well as the wider usage context in which they can be found. In the end user experience is about how the user interacts with and experiences the product.',
           linkText : 'Our UX Presentation',
-          linkHref : ''
+          linkHref : '/',
+          x : 0,
+          y : 0
+        },
+        ui : {
+          text : 'The user interface (UI), in the industrial design field of human–computer interaction, is the space where interactions between humans and machines occur. The goal of this interaction is to allow effective operation and control of the machine from the human end, whilst the machine simultaneously feeds back information that aids the operators decision-making process. Examples of this broad concept of user interfaces include the interactive aspects of computer operating systems, hand tools, heavy machinery operator controls, and process controls. The design considerations applicable when creating user interfaces are related to or involve such disciplines as ergonomics and psychology. <br/> <br/> Generally, the goal of user interface design is to produce a user interface which makes it easy (self-explanatory), efficient, and enjoyable (user-friendly) to operate a machine in the way which produces the desired result. This generally means that the operator needs to provide minimal input to achieve the desired output, and also that the machine minimizes undesired outputs to the human. <br/> <br/> With the increased use of personal computers and the relative decline in societal awareness of heavy machinery,[clarification needed] the term user interface is generally assumed to mean the graphical user interface, while industrial control panel and machinery control design discussions more commonly refer to human-machine interfaces. <br/> <br/> Other terms for user interface are man–machine interface (MMI) and when the machine in question is a computer human–computer interface.',
+          linkText : 'Our UI Presentation',
+          linkHref : '/',
+          x : 0,
+          y : 0
+        },
+        lab : {
+          text : 'A usability lab is a place where usability testing is done. It is an environment where users are studied interacting with a system for the sake of evaluating the system\'s usability. <br/> <br/> Depending on the kind of system that is evaluated, the user sits in front of a personal computer or stands in front of the systems interface, alongside a facilitator who gives the user tasks to perform. Behind a one-way mirror, a number of observers watch the interaction, make notes, and ensure the activity is recorded. Very often the testing and the observing room are not placed alongside. In this case the video and audio observation are transmitted through a (wireless) network and broadcast via a video monitor or video beamer and loudspeakers. Usually, sessions will be filmed and the software will log interaction details.',
+          linkText : 'Our Lab Presentation',
+          linkHref : '/',
+          x : 0,
+          y : 0
         }
       }
     }
@@ -110,20 +134,7 @@ export default {
       }
     }      
   },
-  computed : {
-    tabText : function(){
-      var text = this.tabs.current.text.split(' ');
-      var t = '';
-      for(var i in text){
-        if(text[i] == '<br/>'){
-          t+=text[i];
-        }else{
-          t += '<span>'+text[i]+'</span>';
-          t += ' ';  
-        }        
-      }
-      return t;
-    },
+  computed : {    
     tabLinkText : function(){
       var text = this.tabs.current.linkText;
       var t = '';
@@ -138,6 +149,9 @@ export default {
     }
   },
   methods : {    
+    mousewheel : function(e){
+      console.log(e);
+    },
     spanEnter : function(e){
       var app = this;      
       var c = e.currentTarget.className;      
@@ -171,42 +185,103 @@ export default {
       }
       
     },
+    onResize : function(){
+      if(this.tabsActive){
+
+        var app = this;
+        var m;                
+        var c = app.currentTab;
+        if(c == 'ui'){
+          m = window.innerWidth * 0.085;
+        }else if(c == 'lab'){
+          m = window.innerWidth * 0.17;
+        }else{
+          m = 0;
+        }        
+         var dashX = 25 / (100 / (window.innerWidth - app.winWidth));
+         var uxX = 36 / (100 / (window.innerWidth - app.winWidth));
+         var uiX = 55 / (100 / (window.innerWidth - app.winWidth));
+         var labX = 70 / (100 / (window.innerWidth - app.winWidth));
+
+         
+
+        TweenMax.to('.text h2 .dash', 0.1, {css : {transform : 'translateX(-'+((app.tabs.dash.x + dashX) - 70)+'px)'}, ease: Power2.easeInOut});
+        TweenMax.to('.text h2 .dash', 0.1, {y: -(app.tabs.dash.y - 175 - m), ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .ux', 0.1, {css : {transform : 'translateX(-'+((app.tabs.ux.x + uxX) - 70 - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .ux', 0.1, {y: -(app.tabs.dash.y - 175), ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .ui', 0.1, {css : {transform : 'translateX(-'+((app.tabs.ui.x + uiX) - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .ui', 0.1, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.085)), ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .lab', 0.1, {css : {transform : 'translateX(-'+((app.tabs.lab.x + labX) - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .lab', 0.1, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.17)), ease: Power4.easeInOut});
+      }      
+      
+
+
+    },
     activeTabs : function(e){
       var app = this;
       var c = e.currentTarget.classList[0];      
-      console.log(app.tabsActive);
       if(app.tabsActive){
-        
+        app.tabsanimated = true;
+        var m;
+          if(c == 'ui'){
+            m = window.innerWidth * 0.085;
+          }else if(c == 'lab'){
+            m = window.innerWidth * 0.17;
+          }else{
+            m = 0;
+          }          
+        TweenMax.to(document.querySelectorAll('.text span:not(.'+c+')'), 0.2, {color : '#292929', ease: Power1.easeIn});
+        TweenMax.to(['.text span.'+c, '.text span.dash'], 0.2, {color : '#2af8eb', ease: Power1.easeIn});
+        TweenMax.to('.text h2 .dash', 0.4, {y: -(app.tabs.dash.y - 175 - m), ease: Power4.easeInOut});
+        TweenMax.staggerTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45, ease: Power1.easeOut}, 0.03);
+        TweenMax.set('.process .tab-description__link_border', {right : 0, left : 'auto'});
+        TweenMax.to('.process .tab-description__link_border', 0.5, {width : '0%', ease: Power2.easeIn, onComplete : function(){
+        TweenMax.set('.tab-description__link', {display : 'none'})
+        }});
+        app.$refs.scrollbar.changeTabStart().then(function(){                    
+          app.tabs.current.showText = false;
+          app.tabs.current.text = app.tabs[c].text;
+          app.tabs.current.linkText = app.tabs[c].linkText;
+          app.tabs.current.link = app.tabs[c].link;          
+          setTimeout(function(){
+            app.tabs.current.showText = true;
+            TweenMax.set('.tab-description__link', {display : 'block'});
+            TweenMax.set('.process .tab-description__link_border', {right : 'auto', left : 0});
+            TweenMax.to('.process .tab-description__link_border', 0.5, {width : '100%', ease: Power2.easeIn});
+            TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45}, {opacity : 1,  y:0, scale : 1, rotationY: 0, rotationZ:0, ease: Power3.easeInOut}, 0.03);
+          }, 10);
+          app.currentTab = c;          
+          TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.4, {color : '#ffffff', ease: Power1.easeIn, onComplete : function(){
+            app.tabsanimated = false;
+          }});
+        });        
       }else{
         app.tabsActive = true;        
         app.mouseMove = false;
         app.tabsanimated = true;
+        app.winWidth = window.innerWidth;
         app.currentTab = c;
         app.tabs.current.text = app.tabs[app.currentTab].text;
         app.tabs.current.linkText = app.tabs[app.currentTab].linkText;
-        var dash = {
+        app.tabs.current.linkHref = app.tabs[app.currentTab].linkHref;        
+        app.tabs.dash = {
           x : document.querySelector('.text h2 .dash').getClientRects()[0].x,
           y : document.querySelector('.text h2 .dash').getClientRects()[0].y
         };
-        var ux = {
-          x : document.querySelector('.text h2 .ux').getClientRects()[0].x,
-          y : document.querySelector('.text h2 .ux').getClientRects()[0].y
-        };
-        var ui = {
-          x : document.querySelector('.text h2 .ui').getClientRects()[0].x,
-          y : document.querySelector('.text h2 .ui').getClientRects()[0].y
-        };
-        var lab = {
-          x : document.querySelector('.text h2 .lab').getClientRects()[0].x,
-          y : document.querySelector('.text h2 .lab').getClientRects()[0].y
-        };
+        app.tabs.ux.x = document.querySelector('.text h2 .ux').getClientRects()[0].x;
+        app.tabs.ux.y = document.querySelector('.text h2 .ux').getClientRects()[0].y;          
+        app.tabs.ui.x = document.querySelector('.text h2 .ui').getClientRects()[0].x,
+        app.tabs.ui.y = document.querySelector('.text h2 .ui').getClientRects()[0].y;          
+        app.tabs.lab.x = document.querySelector('.text h2 .lab').getClientRects()[0].x,
+        app.tabs.lab.y = document.querySelector('.text h2 .lab').getClientRects()[0].y;
         TweenMax.to('.g-pager div', 0.3, {x : '-100%', ease: Power4.easeIn});
         TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){
           TweenMax.to('.preloader', 0.8, {height : 0, ease: Power4.easeInOut})
         }});
         TweenMax.to(document.querySelectorAll('.text h2 span:not(.'+c+'):not(.dash) i'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){          
           TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});
-          TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(dash.x - 70)+'px)'}, ease: Power2.easeInOut, onComplete : function(){        
+          TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(app.tabs.dash.x - 70)+'px)'}, ease: Power2.easeInOut, onComplete : function(){        
           var m;
           if(c == 'ui'){
             m = window.innerWidth * 0.085;
@@ -214,11 +289,12 @@ export default {
             m = window.innerWidth * 0.17;
           }else{
             m = 0;
-          }           
-          TweenMax.to(this.target, 0.4, {y: -(dash.y - 175 - m), ease: Power4.easeInOut, onComplete : function(){
+          }          
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - m), ease: Power4.easeInOut, onComplete : function(){
             app.tabsanimated = false;            
-            TweenMax.set('.tab-description', {display : 'block'});
-            TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__text span'), 0.4, {opacity : 0, x : -150,  y:300, scale : 0, rotationY: 45, rotationZ:45, transformOrigin : '0 50% 0'}, {opacity : 1, x : 0,  y:0, scale : 1, rotationY: 0, rotationZ:0, transformOrigin : '0 50% 0', ease: Power2.easeOut}, 0.005);
+            app.tabs.current.showText = true;
+            app.tabs.current.show = true;            
+            TweenMax.set('.tab-description', {display : 'block'});            
             TweenMax.set(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], {left : 0, right : 'auto'});
             TweenMax.fromTo(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], 0.7, {width : '0'}, {width : '100%', ease: Power4.easeIn, onComplete : function(){
               TweenMax.to('.process .tab-description__close i.l', 0.4, {rotationZ : 45, ease: Power3.easeIn});              
@@ -226,16 +302,16 @@ export default {
             }});
             TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45}, {opacity : 1,  y:0, scale : 1, rotationY: 0, rotationZ:0, ease: Power3.easeInOut}, 0.03);
           }});
-          TweenMax.staggerTo(['.text .ux i', '.text .ui i', '.text .lab i'], 0.3, {y : '0%', ease: Power4.easeOut, delay : 0.4}, 0.1);
+          TweenMax.to(['.text .ux i', '.text .ui i', '.text .lab i'], 0.37, {y : '0%', ease: Power3.easeIn, delay : 0.27});
         }});
-        TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(ux.x - 70 - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(dash.y - 175), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ux.x - 70 - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175), ease: Power4.easeInOut})
         }});
-        TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(ui.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(dash.y - 175 - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ui.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
         }});
-        TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(lab.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(dash.y - 175 - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(app.tabs.lab.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
         }});
         }});
         TweenMax.to(['.text .dash', '.text h2 .'+c], 0.15, {color : '#2af8eb'});
@@ -244,24 +320,27 @@ export default {
     closeTabs : function(){
       var app = this;
       app.tabsanimated = true;      
-      TweenMax.to(document.querySelectorAll('.process .tab-description__close i'), 0.4, {rotationZ : 0, ease: Power3.easeInOut, onComplete : function(){
-        var t = document.querySelectorAll('.tab-description__text span');
-        t = Array.prototype.slice.call(t, 0);
-        TweenMax.staggerTo(t.reverse(), 0.4, {opacity : 0, x : 300,  scale : 0, rotationY: 45, rotationZ:45, transformOrigin : '0 50% 0', ease: Power2.easeOut}, 0.005);        
+      TweenMax.to(document.querySelectorAll('.process .tab-description__close i'), 0.4, {rotationZ : 0, ease: Power3.easeInOut, onComplete : function(){        
+        app.$refs.scrollbar.leave();
         TweenMax.set(document.querySelectorAll('.process .tab-description__close i'), {right : 0, left : 'auto'});
         TweenMax.set('.process .tab-description__link_border', {right : 0, left : 'auto'});
         TweenMax.to(document.querySelectorAll('.process .tab-description__close i'), 0.6, {width : '0%', ease: Power3.easeInOut})
-        TweenMax.to('.process .tab-description__link_border', 0.4, {width : '0%', ease: Power4.easeIn});        
+        TweenMax.to('.process .tab-description__link_border', 0.5, {width : '0%', ease: Power2.easeIn});        
         TweenMax.staggerTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45, ease: Power1.easeOut}, 0.03);
-        t = document.querySelectorAll('.text h2.l2 span:not(.'+app.currentTab+'):not(.dash) i, .text h2.r2 span:not(.'+app.currentTab+'):not(.dash) i');        
-        t = Array.prototype.slice.call(t, 0);
-        TweenMax.staggerTo(t.reverse(), 0.2, {y : '-100%', ease: Power4.easeIn}, 0.1);
+        
+        TweenMax.to(document.querySelectorAll('.text h2.l2 span:not(.'+app.currentTab+'):not(.dash) i, .text h2.r2 span:not(.'+app.currentTab+'):not(.dash) i'), 0.37, {y : '100%', ease: Power3.easeIn});
+
         TweenMax.to(document.querySelectorAll('.text h2 span'), 0.4, {y: 0, ease: Power4.easeInOut, delay : 0.5, onComplete : function(){
-          TweenMax.to(document.querySelectorAll('.text h2 span'), 0.8, {css : {transform : 'translateX(0px)'}, ease: Power2.easeInOut, onComplete : function(){              
-            TweenMax.set(document.querySelectorAll('.text .left span'), {color : '#fff', ease: Power1.easeInOut});
-            TweenMax.set(document.querySelectorAll('.text .right span'), {color : '#2af8eb', ease: Power1.easeInOut});
-            TweenMax.to(document.querySelectorAll('.text h2 span i'), 0.3, {y : '0%', ease: Power3.easeInOut, onComplete : function(){
-              TweenMax.set('.tab-description', {display : 'none'});
+          TweenMax.to('.preloader', 0.8, {height : 90, ease: Power4.easeInOut, onComplete : function(){
+            TweenMax.to('.g-pager div', 0.3, {x : '0%', ease: Power4.easeInOut});  
+            TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+          }});
+          TweenMax.to(document.querySelectorAll('.text .left span'), 0.5, {color : '#fff', ease: Power1.easeInOut});
+          TweenMax.to(document.querySelectorAll('.text .right span'), 0.5, {color : '#2af8eb', ease: Power1.easeInOut});
+          TweenMax.to(document.querySelectorAll('.text h2 span'), 0.8, {css : {transform : 'translateX(0px)'}, ease: Power2.easeInOut, onComplete : function(){                        
+            TweenMax.to(document.querySelectorAll('.text h2 span i'), 0.3, {y : '0%', ease: Power3.easeInOut, onComplete : function(){              
+              app.tabs.current.showText = false;
+              app.tabs.current.show = false;
               app.mouseMove = true;
               app.tabsActive = false;
               app.tabsanimated = false;
@@ -286,15 +365,14 @@ export default {
       }});
       */
     },
-    enter: function () {
-      console.log(this);
-        var app = this; 
-        app.$refs.l2.style.textAlign = 'right';
-        app.$refs.r2.style.textAlign = 'right';
-        TweenMax.fromTo([this.$refs.l1, this.$refs.l3], 0.9, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
-        TweenMax.fromTo([this.$refs.r1, this.$refs.r3], 0.9, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
-        TweenMax.fromTo([this.$refs.l2, this.$refs.l4], 0.9, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
-        TweenMax.fromTo([this.$refs.r2, this.$refs.r4], 0.98, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
+    enter: function () {      
+      var app = this; 
+      app.$refs.l2.style.textAlign = 'right';
+      app.$refs.r2.style.textAlign = 'right';
+      TweenMax.fromTo([this.$refs.l1, this.$refs.l3], 0.9, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
+      TweenMax.fromTo([this.$refs.r1, this.$refs.r3], 0.9, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
+      TweenMax.fromTo([this.$refs.l2, this.$refs.l4], 0.9, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
+      TweenMax.fromTo([this.$refs.r2, this.$refs.r4], 0.98, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
     },
     leave: function () {
         this.mouseMove = false;
@@ -308,6 +386,64 @@ export default {
 </script>
 
 <style scope>
+#app-process {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.text {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: perspective(400px);    
+}
+.text li {    
+    height: 100%;
+    position: absolute;
+    top: 0;
+    overflow: hidden;    
+}
+.text li.left {
+    width: 50%;
+    left: 0;
+}
+.text li.right {
+    width: 50%;
+    right: 0;
+}
+.text li .text-wrapper {
+    text-align: left;
+    padding: 120px 5vw 0 5vw;
+}
+.text li .text-wrapper {
+    width: 200%;
+}
+.text li.right .text-wrapper {
+  margin-left: -100%;
+}
+.text-wrapper h2 {    
+    font-size: 10.7vw;
+    margin: 0;
+    padding: 0;
+    line-height: 8.2vw;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: -.45vw;
+    display: table;
+    margin: auto;    
+}
+.text li.left .text-wrapper h2 {
+    color: #2af8eb;
+    transform: rotate(-15deg) skewX(-15deg) translateX(0px);
+    
+}
+.text li.right .text-wrapper h2 {
+    color: #000;
+    transform: rotate(15deg) skewX(15deg) translateX(0px);
+}
 .process .text {
   z-index: 2;  
 }
@@ -329,7 +465,7 @@ export default {
 .process .text-wrapper h2 span i {
   font-style: normal;
   display: inline-block;
-  padding: 0 5px;
+  padding: 0 0.4vw;
 }
 .process .text span.ux,
 .process .text span.ui,
@@ -371,7 +507,11 @@ export default {
     color: #bababa;
     perspective: 400px;
     max-height: calc(100vh - 200px - 130px);
-    overflow: auto;
+    margin-left: -50px;
+    font-weight: 300;
+}
+.vue-scrollbar__wrapper {
+  max-height: calc(100vh - 200px - 130px);
 }
 .process .tab-description__text span {
   display: inline-block;
