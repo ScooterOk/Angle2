@@ -38,3 +38,5 @@ The best interface is the one that helps your business thrive. We know how to bu
 * Media Queries Adaptation
 * Customize cursor settings
 * Gyroscope Web Api
+
+![](http://process.angleto.com/projects-preview/angle2.jpg)
