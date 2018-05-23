@@ -26,3 +26,17 @@ We aspire to study ideas and problems from your perspective and put ourselves in
 
 Caring about your KPIs and brand image
 The best interface is the one that helps your business thrive. We know how to build a digital experience that will boost your sales and reinforce your brand image.
+
+### Technologies used:
+
+* HTML5
+* CSS3
+* Vue2
+* Greensock Animation Platform
+* SVG Animation
+* Scroll Control
+* Media Queries Adaptation
+* Customize cursor settings
+* Gyroscope Web Api
+
+![](http://process.angleto.com/projects-preview/angle2.jpg)
