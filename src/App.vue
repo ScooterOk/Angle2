@@ -1,5 +1,5 @@
 <template>
-    <div id="app" @mousemove="cursorRing" :class="global.page">
+    <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick">
         <svg class="cursor-ring" width="60" height="60">
             <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
         </svg>
@@ -9,7 +9,7 @@
             </div>            
         </div>
         <header>
-            <div class="logo">                
+            <div class="logo" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                 <router-link to="/">
                   <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      width="126px" height="21px" viewBox="0 0 126 21" style="enable-background:new 0 0 126 21;" xml:space="preserve">                  
@@ -31,17 +31,17 @@
                 </router-link>
             </div>
             <nav class="clearfix">
-                <div class="process">                    
+                <div class="process" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <router-link to="/process">Process</router-link>
                 </div>
-                <div class="projects">                    
+                <div class="projects" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <router-link to="/projects">Projects</router-link>
                 </div>
-                <div class="contact">
+                <div class="contact" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                   <router-link to="/contacts">Contact Us</router-link>
                 </div>                
             </nav>
-            <div class="lng">
+            <div class="lng" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
               <a href="">Ukr</a>
             </div>
         </header>        
@@ -52,12 +52,15 @@
           </div>            
         </div>
         <div class="go-tonext" ref="goTonext">
-          <div>
-            <span>go play</span>
-          </div>
-          <div>
-            <span>outside</span>
+          <div class="go-tonext__wrapper" @click="clickNext">
+            <div>
+              <span data-next="" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">go play</span>
+            </div>
+            <div>
+              <span data-next="" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">outside</span>
+            </div> 
           </div>          
+          <div class="go-tonext__hover"></div>         
         </div>
         <div class="main-bg" ref="mainBg"></div>
         <div class="dda" ref="dda">            
@@ -76,7 +79,7 @@
               <span>Follow Us</span>
             </div>
             <ul class="clearfix">
-                <li class="be">
+                <li class="be" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <a href="">
                         <svg version="1.1" id="behance-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="22px" height="14px" viewBox="0 0 22 14" style="enable-background:new 0 0 22 14;" xml:space="preserve">
                         <path class="st0" d="M6.2,0.3c0.6,0,1.2,0.1,1.7,0.2s1,0.3,1.3,0.5c0.4,0.3,0.7,0.6,0.9,1s0.3,0.9,0.3,1.5c0,0.7-0.1,1.2-0.5,1.7C9.7,5.7,9.2,6,8.6,6.3c0.8,0.2,1.4,0.6,1.8,1.2C10.8,8.1,11,8.8,11,9.6c0,0.7-0.1,1.2-0.4,1.7c-0.3,0.5-0.6,0.9-1,1.2S8.7,13,8.1,13.2c-0.6,0.1-1.1,0.2-1.7,0.2H0V0.3H6.2z M5.8,5.6c0.5,0,0.9-0.1,1.3-0.4C7.5,5,7.6,4.6,7.6,4c0-0.3-0.1-0.6-0.2-0.8C7.3,3.1,7.2,2.9,7,2.8C6.8,2.7,6.6,2.6,6.4,2.6S5.9,2.5,5.7,2.5H2.9v3.1H5.8z M6,11.2c0.3,0,0.6,0,0.8-0.1C7.1,11,7.3,11,7.5,10.8c0.2-0.1,0.4-0.3,0.5-0.5c0.1-0.2,0.2-0.5,0.2-0.9C8.1,8.8,8,8.3,7.6,8S6.7,7.6,6.1,7.6H2.9v3.6H6z"/>
@@ -84,7 +87,7 @@
                         <rect x="14.6" y="1" class="st0" width="5.3" height="1.3"/></svg>
                     </a>
                 </li>
-                <li class="dr">
+                <li class="dr" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <a href="">
                         <svg version="1.1" id="dribbble" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g>
@@ -98,7 +101,7 @@
                         </svg>
                     </a>
                 </li>
-                <li class="fb">
+                <li class="fb" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <a href="">            
                         <svg version="1.1" id="facebook" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="9px" height="16px" viewBox="0 0 9 16" style="enable-background:new 0 0 9 16;" xml:space="preserve">
                             <g>
@@ -108,7 +111,7 @@
                         </svg>
                     </a>
                 </li>
-                <li class="ig">
+                <li class="ig" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <a href="">
                         <svg version="1.1" id="instagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g>
@@ -160,7 +163,7 @@ export default {
     methods : {
         init : function(e){
             var app = this;
-            TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng',  document.querySelectorAll('.follow-us li')], { y: 30});
+            TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng', document.querySelectorAll('.follow-us li')], { y: 35});
             TweenMax.set('.follow-us_title span', { y: 10});
             TweenMax.set('.g-pager div', { x: -35});
             TweenMax.set(['header', '.g-pager', '.follow-us'], {opacity : 1});
@@ -177,9 +180,13 @@ export default {
                     switch (name) {
                       case 'home':
                         app.home();
+                        app.cursor.color = '#b6b6b6';
+                        app.cursor.hoverColor = '#2af8eb';
                         break;
                       case 'process':
                         app.process();
+                        app.cursor.color = '#b6b6b6';
+                        app.cursor.hoverColor = '#2af8eb';
                         break;
                       default:
                         // statements_def
@@ -286,19 +293,83 @@ export default {
             TweenMax.to('.cursor-ring', 0.5, {x : (e.clientX - 30), y : (e.clientY - 30)});
           }          
         },
-        hover : function(){
-            console.log('HOVER');
+        clickNext : function(){          
+          var name = this.global.page;          
+          console.log(name);
+          switch (name) {
+            case 'home':
+              router.push({ path: 'process' });
+              break;
+            case 'process':
+              
+              break;
+            default:
+              // statements_def
+              break;
+        } 
+        },
+        hoverLinks : function(e){
+          var app = this;
+          if(app.initDone){
+            if(e.type == 'mouseenter'){
+              app.cursor.hoverActive = true;
+              TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
+              TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.hoverColor});
+            }else{
+              app.cursor.hoverActive = false;
+              TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+              TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
+            }
+          }            
+        },
+        hoverNext : function(e){
+          var app = this;
+          if(app.initDone){
+            if(e.type == 'mouseenter'){
+              TweenMax.to('.preloader', 0.3, {height : 0});
+            }else{              
+              TweenMax.to('.preloader', 0.3, {height : 90});
+            }
+          }          
+        },
+        longClick : function(e){          
+          var app = this;
+          if(app.initDone && !app.cursor.hoverActive){
+            if(e.type == 'mousedown'){
+              TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});            
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '3s','letter-spacing': '20px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+              TweenMax.to('.preloader', 3, {y : 0, height : '100%'});
+              TweenMax.to('.progress-ring__circle', 3, {strokeDashoffset : 150.796, onComplete : function(){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});                
+              }});
+              app.$refs.currentComponent.longLeave();  
+            }else{
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+              TweenMax.to('.preloader', 0.6, {y : -70, height : '90px', ease: Power2.easeIn});
+              TweenMax.to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, ease: Power2.easeIn, onComplete : function(){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});
+                TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+              }});
+              app.$refs.currentComponent.longLeaveCancel();
+            }
+          }          
         }
     },
     watch : {
       $route : function(c, p){        
-        var name = c.name;        
+        var app = this;        
+        var name = c.name;
+        console.log(name);
         switch (name) {
           case 'home':
             this.home();
+            app.cursor.color = '#b6b6b6';
+            app.cursor.hoverColor = '#2af8eb';            
             break;
           case 'process':
             this.process();
+            app.cursor.color = '#b6b6b6';
+            app.cursor.hoverColor = '#2af8eb';
             break;
           default:
             // statements_def
@@ -307,7 +378,7 @@ export default {
       }
     },
     data () {
-        return {
+        return {            
             preloaderNumber : 0,
             initDone : false,
             msg: 'Welcome to Your Vue.js App',
@@ -319,7 +390,10 @@ export default {
             },
             cursor : {
                 initDone : false,
-                click : ''
+                click : '',
+                color : '',
+                hoverColor : '',
+                hoverActive : false
             }
         }
     }
@@ -393,7 +467,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
-  padding: 0 70px;
+  padding: 0 70px 10px 70px;
   z-index: 5;
   opacity: 0;
   overflow: hidden;
@@ -432,6 +506,27 @@ header .lng {
 }
 header a {
   color: #1d1d1d;
+  display: inline-block;
+  position: relative;
+}
+header nav a::after,
+header .lng a::after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 0;
+  background-color: #2af8eb;
+  position: absolute;
+  left: initial;
+  right: 0;
+  bottom: -5px;
+  transition: width 350ms ease;
+}
+header nav a:hover::after,
+header .lng a:hover::after {
+  width: 100%;
+  left: 0;
+  right: initial;
 }
 
 .g-pager {
@@ -488,18 +583,30 @@ header a {
   text-transform: uppercase;
   transform: rotate(270deg);
   margin-left: -117px;
-  padding-bottom: 0px;
-  cursor: pointer;
+  padding-bottom: 0px;  
   z-index: 4;
 }
-.go-tonext > div {
-  overflow: hidden;
+.go-tonext__hover {
+  height: 1px;
+  width: 0;
+  background-color: #000;
+  position: absolute;
+  bottom: -5px;
+  right: 110px;
 }
-.go-tonext > div > span {
-  display: block;
+.go-tonext__wrapper {
+  width: 55px;
+}
+.go-tonext__wrapper > div {
+  overflow: hidden;
+  width: 200px;
+}
+.go-tonext__wrapper > div > span {
+  display: inline-block;
+  cursor: pointer;
   opacity: 1;
   transition-property: letter-spacing;
-  transition-duration: 0.9s;
+  transition-duration: 0.9s;  
 }
 .follow-us {
   position: fixed;
@@ -572,6 +679,13 @@ header .logo #logo .st0,
 #facebook .st0,
 #instagram .st0 {
   transition: color 1s ease, fill 1s ease;
+}
+#behance-logo:hover .st0,
+#dribbble:hover .st0,
+#facebook:hover .st0,
+#instagram:hover .st0 {  
+  fill: #2af8eb!important;
+  transition-duration: 350ms!important;
 }
 .process header a,
 .process .dda,
