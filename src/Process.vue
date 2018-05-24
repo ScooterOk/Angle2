@@ -1,5 +1,5 @@
 <template>
-  <div id="app-process" v-resize="onResize" @mousewheel="mousewheel">
+  <div id="app-process" v-resize="onResize">
       <ul class="text">
         <li class="left">
           <div class="text-wrapper">
@@ -50,7 +50,7 @@
           <a :href="tabs.current.linkHref" v-html="tabLinkText"></a>
           <i class="tab-description__link_border"></i>
         </div>
-        <div class="tab-description__close" @click="closeTabs"><i class="l"></i><i class="r"></i></div>
+        <div class="tab-description__close" @click="closeTabs" @mouseenter="hoverLinks" @mouseleave="hoverLinks"><i class="l"></i><i class="r"></i></div>
       </section>
   </div>    
 </template>
@@ -59,7 +59,7 @@
 import resize from 'vue-resize-directive';
 import Vue2Scrollbar from './Scroller.vue';
 export default {
-  props : ['mouseX'],
+  props : ['mouseX', 'cursor'],
   components: {
       'scrollbar': Vue2Scrollbar
     },
@@ -154,6 +154,7 @@ export default {
     },
     spanEnter : function(e){
       var app = this;      
+      app.$emit('hoverActive', true);
       var c = e.currentTarget.className;      
       if(app.tabsActive){
         if(!app.tabsanimated){          
@@ -170,6 +171,7 @@ export default {
     },
     spanLeave : function(e){
       var app = this;
+      if(!app.tabsActive)app.$emit('hoverActive', false);
       var c = e.currentTarget.className;
       if(app.tabsActive){
         if(!app.tabsanimated && app.currentTab != c){
@@ -219,7 +221,7 @@ export default {
 
     },
     activeTabs : function(e){
-      var app = this;
+      var app = this;      
       var c = e.currentTarget.classList[0];      
       if(app.tabsActive){
         app.tabsanimated = true;
@@ -320,7 +322,7 @@ export default {
     closeTabs : function(){
       var app = this;
       app.tabsanimated = true;      
-      TweenMax.to(document.querySelectorAll('.process .tab-description__close i'), 0.4, {rotationZ : 0, ease: Power3.easeInOut, onComplete : function(){        
+      TweenMax.to(document.querySelectorAll('.process .tab-description__close i'), 0.4, {rotationZ : 0, ease: Power3.easeInOut, onComplete : function(){
         app.$refs.scrollbar.leave();
         TweenMax.set(document.querySelectorAll('.process .tab-description__close i'), {right : 0, left : 'auto'});
         TweenMax.set('.process .tab-description__link_border', {right : 0, left : 'auto'});
@@ -344,6 +346,7 @@ export default {
               app.mouseMove = true;
               app.tabsActive = false;
               app.tabsanimated = false;
+              app.$emit('hoverActive', false);
             }});      
           }});
         }})
@@ -376,11 +379,29 @@ export default {
     },
     leave: function () {
         this.mouseMove = false;
-        TweenMax.to([this.$refs.l1, this.$refs.l3], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'},ease: Power3.easeOut});        
-        TweenMax.to([this.$refs.r1, this.$refs.r3], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'},ease: Power3.easeOut});
-        TweenMax.to([this.$refs.l2, this.$refs.l4], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'},ease: Power3.easeOut});
-        TweenMax.to([this.$refs.r2, this.$refs.r4], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'},ease: Power3.easeOut});
-    }    
+        if(this.tabsActive){
+          TweenMax.staggerTo(['.dash', '.ux', '.ui', '.lab'], 0.3, {y : -300, opacity : 0, ease: Power3.easeOut}, 0.1);
+          TweenMax.to('.tab-description', 1, {x : 500, opacity : 0, ease: Power3.easeOut});
+          TweenMax.to('.g-pager div', 0.3, {x : '0%', ease: Power4.easeInOut});  
+          TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+        }else{
+          TweenMax.to([this.$refs.l1, this.$refs.l3], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'},ease: Power3.easeOut});
+          TweenMax.to([this.$refs.r1, this.$refs.r3], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'},ease: Power3.easeOut});
+          TweenMax.to([this.$refs.l2, this.$refs.l4], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'},ease: Power3.easeOut});
+          TweenMax.to([this.$refs.r2, this.$refs.r4], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'},ease: Power3.easeOut});
+        }        
+    },
+    hoverLinks : function(e){
+      console.log(e);
+      var app = this;      
+      if(e.type == 'mouseenter'){        
+        TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
+        TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.hoverColor});
+      }else{        
+        TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+        TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
+      }      
+    }
   }
 }
 </script>

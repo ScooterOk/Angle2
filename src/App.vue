@@ -1,5 +1,5 @@
 <template>
-    <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick">
+    <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">
         <svg class="cursor-ring" width="60" height="60">
             <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
         </svg>
@@ -45,7 +45,7 @@
               <a href="">Ukr</a>
             </div>
         </header>        
-        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :cursor="cursor" @hoverActive="cursor.hoverActive = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -212,20 +212,24 @@ export default {
         },
         home : function(){
           var app = this;
+          app.transitionPage = true;
           if(app.initDone){
-            this.$refs.currentComponent.leave();
+            this.$refs.currentComponent.leave();            
             TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
             TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
               TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-              TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-              app.global.page = 'home';
+              TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});              
               TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
                 TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
                 TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
                 TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
                 app.global.currentComponent = 'home';
+                app.global.page = 'home';
+                app.global.pager = '01';
+                app.transitionPage = false;
+                app.scroll = true;
               }});            
             }});   
           }else{
@@ -240,17 +244,18 @@ export default {
                 TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                 TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                 app.initDone = true;
+                app.transitionPage = false;
+                app.scroll = true;
               }});
             }});
           }          
         },
         process : function(){
           var app = this;
+          app.transitionPage = true;
           if(app.initDone){
-            this.$refs.currentComponent.leave();
             TweenMax.set(app.$refs.mainBg, {backgroundColor : '#000000', height : '100%', width : 0, x : 0});
-            TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
-            TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+            if(app.cursor.longAnimateDone){
               TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
               TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
               app.global.page = 'process';
@@ -260,8 +265,32 @@ export default {
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
                 TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
                 app.global.currentComponent = 'process';
-              }});            
-            }});          
+                app.global.pager = '02';
+                app.transitionPage = false;
+                app.scroll = true;
+                TweenMax.to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, stroke : app.cursor.color, ease: Power2.easeIn, onComplete : function(){                  
+                  TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+                }});
+              }});
+            }else{
+              this.$refs.currentComponent.leave();            
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                app.global.page = 'process';
+                TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
+                  TweenMax.set(app.$el, {backgroundColor : '#000000'});
+                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
+                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                  TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                  app.global.currentComponent = 'process';
+                  app.global.pager = '02';
+                  app.transitionPage = false;
+                  app.scroll = true;
+                }});
+              }});
+            }            
           }else{
             TweenMax.set(app.$refs.mainBg, {backgroundColor : '#000000', height : '100%', width : 0, x : 0});
             TweenMax.to('.preloader span', 1.3, {y : 50});            
@@ -271,8 +300,6 @@ export default {
             TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
               TweenMax.set(app.$el, {backgroundColor : '#000000'});
               TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
-
-
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
               TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut, onComplete : function(){
                 TweenMax.to('.g-pager div', 0.4, {x : 0});
@@ -284,6 +311,8 @@ export default {
                 }});
               }});
               app.global.currentComponent = 'process';
+              app.global.pager = '02';
+              app.transitionPage = false;
             }});
           }          
         },
@@ -298,7 +327,7 @@ export default {
           console.log(name);
           switch (name) {
             case 'home':
-              router.push({ path: 'process' });
+              router.push({path : 'process'});
               break;
             case 'process':
               
@@ -306,7 +335,22 @@ export default {
             default:
               // statements_def
               break;
-        } 
+          } 
+        },
+        clickPrev : function(){
+          var name = this.global.page;          
+          console.log(name);
+          switch (name) {
+            case 'home':
+              return false;
+              break;
+            case 'process':
+              router.push({path : '/'});
+              break;
+            default:
+              // statements_def
+              break;
+          } 
         },
         hoverLinks : function(e){
           var app = this;
@@ -324,7 +368,7 @@ export default {
         },
         hoverNext : function(e){
           var app = this;
-          if(app.initDone){
+          if(app.initDone && !app.transitionPage){            
             if(e.type == 'mouseenter'){
               TweenMax.to('.preloader', 0.3, {height : 0});
             }else{              
@@ -334,25 +378,45 @@ export default {
         },
         longClick : function(e){          
           var app = this;
-          if(app.initDone && !app.cursor.hoverActive){
+          if(app.initDone && !app.cursor.hoverActive && !app.transitionPage){
             if(e.type == 'mousedown'){
-              TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});            
+              app.cursor.longAnimateDone = false;
+              TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
+              TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.hoverColor});
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '3s','letter-spacing': '20px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-              TweenMax.to('.preloader', 3, {y : 0, height : '100%'});
+              TweenMax.to('.preloader', 2.8, {y : 0, height : '100%', onComplete : function(){
+                app.cursor.longAnimateDone = true;
+                router.push({ path: 'process' });
+              }});
               TweenMax.to('.progress-ring__circle', 3, {strokeDashoffset : 150.796, onComplete : function(){
-                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});                
-              }});
-              app.$refs.currentComponent.longLeave();  
-            }else{
-              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-              TweenMax.to('.preloader', 0.6, {y : -70, height : '90px', ease: Power2.easeIn});
-              TweenMax.to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, ease: Power2.easeIn, onComplete : function(){
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});
-                TweenMax.to('.cursor-ring', 0.2, {scale : 1});
               }});
-              app.$refs.currentComponent.longLeaveCancel();
+              app.$refs.currentComponent.longLeave();
+            }else{
+              if(!app.cursor.longAnimateDone){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                TweenMax.to('.preloader', 0.6, {y : -70, height : '90px', ease: Power2.easeIn});
+                TweenMax.to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, ease: Power2.easeIn, onComplete : function(){
+                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});
+                  TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
+                  TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+                }});
+                app.$refs.currentComponent.longLeaveCancel();  
+              }              
             }
           }          
+        },
+        mousewheel : function(e){
+          var app = this;          
+          if(app.scroll){
+            if(e.deltaY > 0){              
+              app.clickNext();
+            }else{
+              app.clickPrev();
+            }
+            app.scroll = false;            
+          }
+          e.preventDefault();
         }
     },
     watch : {
@@ -382,18 +446,21 @@ export default {
             preloaderNumber : 0,
             initDone : false,
             msg: 'Welcome to Your Vue.js App',
+            transitionPage : false,
+            scroll : false,
             global : {
                 currentComponent : '',
                 pager : '01',
                 mouseX : 0,
-                page : ''
+                page : ''                
             },
             cursor : {
                 initDone : false,
                 click : '',
                 color : '',
                 hoverColor : '',
-                hoverActive : false
+                hoverActive : false,
+                longAnimateDone : false
             }
         }
     }
@@ -403,6 +470,12 @@ export default {
 <style>
 * {
   box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;                                  
 }
 a {
   text-decoration: none;

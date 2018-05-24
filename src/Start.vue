@@ -78,10 +78,10 @@ export default {
     },
     longLeave : function(){      
         this.mouseMove = false;
-        TweenMax.to([this.$refs.l1, this.$refs.l3], 3, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power0.easeOut});
-        TweenMax.to([this.$refs.r1, this.$refs.r3], 3, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power0.easeOut});
-        TweenMax.to([this.$refs.l2, this.$refs.l4], 3, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power0.easeOut});
-        TweenMax.to([this.$refs.r2, this.$refs.r4], 3, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power0.easeOut});
+        TweenMax.to([this.$refs.l1, this.$refs.l3], 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r1, this.$refs.r3], 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.l2, this.$refs.l4], 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r2, this.$refs.r4], 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
     },
     longLeaveCancel : function(){
         this.mouseMove = true;
