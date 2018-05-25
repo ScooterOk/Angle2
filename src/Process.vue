@@ -222,7 +222,8 @@ export default {
     },
     activeTabs : function(e){
       var app = this;      
-      var c = e.currentTarget.classList[0];      
+      var c = e.currentTarget.classList[0];
+      app.$emit('scroll', false);
       if(app.tabsActive){
         app.tabsanimated = true;
         var m;
@@ -347,6 +348,7 @@ export default {
               app.tabsActive = false;
               app.tabsanimated = false;
               app.$emit('hoverActive', false);
+              app.$emit('scroll', true);
             }});      
           }});
         }})

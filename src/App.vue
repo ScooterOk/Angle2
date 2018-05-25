@@ -45,7 +45,7 @@
               <a href="">Ukr</a>
             </div>
         </header>        
-        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :cursor="cursor" @hoverActive="cursor.hoverActive = $event"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :cursor="cursor" @hoverActive="cursor.hoverActive = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -149,6 +149,7 @@ import Process from './Process.vue';
 export default {
     name: 'app',  
     mounted : function () {
+      console.log(this);
         this.init();        
     },  
     components : {
@@ -229,6 +230,7 @@ export default {
                 app.global.page = 'home';
                 app.global.pager = '01';
                 app.transitionPage = false;
+                app.cursor.hoverActive = false;
                 app.scroll = true;
               }});            
             }});   
@@ -322,9 +324,9 @@ export default {
             TweenMax.to('.cursor-ring', 0.5, {x : (e.clientX - 30), y : (e.clientY - 30)});
           }          
         },
-        clickNext : function(){          
-          var name = this.global.page;          
-          console.log(name);
+        clickNext : function(){
+          app.scroll = false;
+          var name = this.global.page;
           switch (name) {
             case 'home':
               router.push({path : 'process'});
@@ -338,10 +340,11 @@ export default {
           } 
         },
         clickPrev : function(){
-          var name = this.global.page;          
-          console.log(name);
+          app.scroll = false;
+          var name = this.global.page;
           switch (name) {
             case 'home':
+              app.scroll = true;
               return false;
               break;
             case 'process':
@@ -413,8 +416,7 @@ export default {
               app.clickNext();
             }else{
               app.clickPrev();
-            }
-            app.scroll = false;            
+            }            
           }
           e.preventDefault();
         }
