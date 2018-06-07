@@ -146,6 +146,7 @@
 <script>
 import Start from './Start.vue';
 import Process from './Process.vue';
+import Projects from './Projects.vue';
 export default {
     name: 'app',  
     mounted : function () {
@@ -154,7 +155,8 @@ export default {
     },  
     components : {
         'home' : Start,
-        'process' : Process
+        'process' : Process,
+        'projects' : Projects
     },
     computed: {
         preloaderPercent: function() {
@@ -318,6 +320,35 @@ export default {
             }});
           }          
         },
+        projects : function(){
+          var app = this;
+          app.transitionPage = true;
+          if(app.initDone){
+            TweenMax.set(app.$refs.mainBg, {backgroundColor : '#2af8eb', height : '100%', width : 0, x : 0});
+            if(app.cursor.longAnimateDone){
+
+            }else{
+              this.$refs.currentComponent.leave();
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 12, delay : 0.4});
+                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                app.global.page = 'projects';
+                TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){                  
+                  TweenMax.set(app.$el, {backgroundColor : '#2af8eb'});
+                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
+                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                  TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
+                  app.global.currentComponent = 'projects';
+                  app.global.pager = '03';
+                  app.transitionPage = false;
+                  app.scroll = true;
+                }});
+              }});
+            }
+          }
+        },
         cursorRing : function(e){            
           this.global.mouseX = e.pageX;
           if(this.cursor.initDone){
@@ -434,6 +465,11 @@ export default {
             break;
           case 'process':
             this.process();
+            app.cursor.color = '#b6b6b6';
+            app.cursor.hoverColor = '#2af8eb';
+            break;
+          case 'projects':
+            this.projects();
             app.cursor.color = '#b6b6b6';
             app.cursor.hoverColor = '#2af8eb';
             break;
