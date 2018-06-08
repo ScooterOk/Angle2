@@ -1,6 +1,6 @@
 <template>
     <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">
-        <svg class="cursor-ring" width="60" height="60">
+        <svg class="cursor-ring" width="60" height="60" @mouseenter="cursorRingHover">
             <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
         </svg>
         <div class="preloader">
@@ -45,7 +45,7 @@
               <a href="">Ukr</a>
             </div>
         </header>        
-        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :cursor="cursor" @hoverActive="cursor.hoverActive = $event" @scroll="scroll = $event"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -337,7 +337,7 @@ export default {
                 app.global.page = 'projects';
                 TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){                  
                   TweenMax.set(app.$el, {backgroundColor : '#2af8eb'});
-                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
+                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
                   TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
                   TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
                   app.global.currentComponent = 'projects';
@@ -351,9 +351,13 @@ export default {
         },
         cursorRing : function(e){            
           this.global.mouseX = e.pageX;
+          this.global.mouseY = e.pageY;
           if(this.cursor.initDone){
             TweenMax.to('.cursor-ring', 0.5, {x : (e.clientX - 30), y : (e.clientY - 30)});
           }          
+        },
+        cursorRingHover : function(e){
+          e.preventDefault();
         },
         clickNext : function(){
           app.scroll = false;
@@ -412,7 +416,7 @@ export default {
         },
         longClick : function(e){          
           var app = this;
-          if(app.initDone && !app.cursor.hoverActive && !app.transitionPage){
+          if(app.initDone && !app.cursor.hoverActive && !app.transitionPage && app.cursor.longAnimatePermit){
             if(e.type == 'mousedown'){
               app.cursor.longAnimateDone = false;
               TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
@@ -490,6 +494,7 @@ export default {
                 currentComponent : '',
                 pager : '01',
                 mouseX : 0,
+                mouseY : 0,
                 page : ''                
             },
             cursor : {
@@ -498,7 +503,8 @@ export default {
                 color : '',
                 hoverColor : '',
                 hoverActive : false,
-                longAnimateDone : false
+                longAnimateDone : false,
+                longAnimatePermit : true
             }
         }
     }

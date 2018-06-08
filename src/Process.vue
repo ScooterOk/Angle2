@@ -154,7 +154,7 @@ export default {
     },
     spanEnter : function(e){
       var app = this;      
-      app.$emit('hoverActive', true);
+      app.$emit('longAnimatePermit', false);
       var c = e.currentTarget.className;      
       if(app.tabsActive){
         if(!app.tabsanimated){          
@@ -171,7 +171,7 @@ export default {
     },
     spanLeave : function(e){
       var app = this;
-      if(!app.tabsActive)app.$emit('hoverActive', false);
+      if(!app.tabsActive)app.$emit('longAnimatePermit', true);
       var c = e.currentTarget.className;
       if(app.tabsActive){
         if(!app.tabsanimated && app.currentTab != c){
@@ -347,7 +347,7 @@ export default {
               app.mouseMove = true;
               app.tabsActive = false;
               app.tabsanimated = false;
-              app.$emit('hoverActive', false);
+              app.$emit('longAnimatePermit', true);
               app.$emit('scroll', true);
             }});      
           }});
