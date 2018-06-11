@@ -220,12 +220,18 @@ export default {
       app.details.slide = silde;      
       app.$emit('longAnimatePermit', false);
       var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
-      var r = document.querySelectorAll('.projects__list li:nth-child(even) span');      
-      TweenMax.fromTo(l, 1.5, {xPercent : 0, left:"-100%", opacity : 0}, {x : '-50%', left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
-      TweenMax.fromTo(r, 1.5, {xPercent : 0, left:"100%", opacity : 0}, {x : '-50%', left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
-      TweenMax.to('.projects__details', 0.7, {width : '70vw', ease: Power4.easeIn, delay : 0.9,});
-      TweenMax.to(l, 0.7, {xPercent : 0, left:"0", ease: Power4.easeIn, delay : 0.9, force3D:true});
-      TweenMax.to(r, 0.7, {xPercent : 0, left:"0", ease: Power4.easeIn, delay : 0.9, force3D:true});
+      var r = document.querySelectorAll('.projects__list li:nth-child(even) span');
+      l.forEach( function(e, i) {
+        var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
+        TweenMax.fromTo(e, 1.5, {x : -e.clientWidth}, {x : x, ease: Power4.easeOut, force3D:true});
+      });
+      r.forEach( function(e, i) {
+        var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
+        TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, ease: Power4.easeOut, force3D:true});
+      });
+      TweenMax.fromTo('.projects__details', 0.7, {x : '100%'}, {x : '0%', ease: Power4.easeIn, delay : 0.9,});
+      TweenMax.to(l, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});
+      TweenMax.to(r, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});      
       TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.9, {color : '#000000', delay : 1.2, onComplete : function(){
         document.querySelector('.projects__list li:first-child').classList.add('hover');
         TweenMax.to(document.querySelector('.projects__details_photo'), 0.7, {height : '100%', ease: Power3.easeOut});
@@ -260,8 +266,8 @@ export default {
 .projects__list li {
   display: flex;    
   position: relative;
-  height: 20vw;
-  margin-top: -11.7vw;
+  height: 21.3vw;
+  margin-top: -13vw;
 }
 .project__hover-left {
   position: absolute;
@@ -333,7 +339,7 @@ export default {
   right: 0;
   top: 152px;
   background: #fff;
-  width: 0;
+  width: 70vw;
   height: 33.2vw;
   overflow: hidden;
 }
