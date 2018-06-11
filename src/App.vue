@@ -191,6 +191,11 @@ export default {
                         app.cursor.color = '#b6b6b6';
                         app.cursor.hoverColor = '#2af8eb';
                         break;
+                        case 'projects':
+                        app.projects();
+                        app.cursor.color = '#b6b6b6';
+                        app.cursor.hoverColor = '#2af8eb';
+                        break;
                       default:
                         // statements_def
                         break;
@@ -323,15 +328,15 @@ export default {
         projects : function(){
           var app = this;
           app.transitionPage = true;
-          if(app.initDone){
-            TweenMax.set(app.$refs.mainBg, {backgroundColor : '#2af8eb', height : '100%', width : 0, x : 0});
+          TweenMax.set(app.$refs.mainBg, {backgroundColor : '#2af8eb', height : '100%', width : 0, x : 0});
+          if(app.initDone){            
             if(app.cursor.longAnimateDone){
 
             }else{
               this.$refs.currentComponent.leave();
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
               TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
-                TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 12, delay : 0.4});
+                TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
                 TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
                 TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
                 app.global.page = 'projects';
@@ -347,6 +352,29 @@ export default {
                 }});
               }});
             }
+          }else{            
+            TweenMax.to('.preloader span', 1.3, {y : 50});            
+            TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+            TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+            TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
+            app.global.page = 'projects';
+            TweenMax.to('.preloader', 0.7, {backgroundColor : '#000', ease: Power3.easeIn, onComplete : function(){
+              TweenMax.set(app.$el, {backgroundColor : '#2af8eb'});
+              TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+              TweenMax.set(app.$refs.dda.querySelectorAll('span'), {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});              
+              TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut, onComplete : function(){
+                TweenMax.to('.g-pager div', 0.4, {x : 0});
+                TweenMax.to('.logo', 0.4, {y : 0});
+                TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+                  TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
+                  TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
+                  app.initDone = true;
+                }});
+              }});
+              app.global.currentComponent = 'projects';
+              app.global.pager = '03';
+              app.transitionPage = false;
+            }});
           }
         },
         cursorRing : function(e){            
