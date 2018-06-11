@@ -149,7 +149,8 @@ export default {
         TweenMax.to(app.$refs.list, 0.5, {y : yDiff});  
       }      
     },
-    projectHover : function(e){      
+    projectHover : function(e){  
+    return false;   
       var app = this;
       if(app.scrollListPermit && e.target.parentNode.className != 'hover'){        
         document.querySelectorAll('.projects__list li').forEach(function(el, index) {
@@ -181,7 +182,7 @@ export default {
         TweenMax.to(document.querySelectorAll('.projects__list li:first-child .tech b'), 0.7, {x : '0%', ease: Power2.easeOut});
         TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {left : '6.2vw', ease: Power2.easeOut});
         TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.7, {opacity : 0.1, ease: Power2.easeOut, onComplete : function(){
-          app.scrollListPermit = true;
+          //app.scrollListPermit = true;
         }});
       }});
     }
@@ -207,8 +208,7 @@ export default {
 
 }
 .projects__list li {
-  display: flex;  
-  margin-bottom: 30px;
+  display: flex;    
   position: relative;
 }
 .project__hover-left {

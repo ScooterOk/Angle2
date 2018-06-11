@@ -445,6 +445,7 @@ export default {
           }          
         },
         mousewheel : function(e){
+          console.log(e);
           var app = this;          
           if(app.scroll){
             if(e.deltaY > 0){              
@@ -541,7 +542,7 @@ b {
 
 .cursor-ring {
     z-index: 1;
-    position: fixed;    
+    position: fixed;
 }
 .cursor-ring circle {
     stroke: #b6b6b6;
