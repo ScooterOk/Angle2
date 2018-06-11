@@ -146,7 +146,7 @@ export default {
         var cp = 100 / (sh / y);
         var diff = (lh - sh);
         var yDiff = -(diff / 100) * cp;
-        TweenMax.to(app.$refs.list, 0.5, {y : yDiff});  
+        TweenMax.to(app.$refs.list, 0.5, {top : yDiff});  
       }      
     },
     projectHover : function(e){      
@@ -170,8 +170,8 @@ export default {
       app.$emit('longAnimatePermit', false);
       var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
       var r = document.querySelectorAll('.projects__list li:nth-child(even) span');      
-      TweenMax.fromTo(l, 1.5, {xPercent : 0, left:"-100%", opacity : 0}, {xPercent : -50, left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
-      TweenMax.fromTo(r, 1.5, {xPercent : 0, left:"100%", opacity : 0}, {xPercent : -50, left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
+      TweenMax.fromTo(l, 1.5, {xPercent : 0, left:"-100%", opacity : 0}, {x : '-50%', left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
+      TweenMax.fromTo(r, 1.5, {xPercent : 0, left:"100%", opacity : 0}, {x : '-50%', left:"50%", opacity : 1, ease: Power4.easeOut, force3D:true});
       TweenMax.to(l, 0.7, {xPercent : 0, left:"0", ease: Power4.easeIn, delay : 0.9, force3D:true});
       TweenMax.to(r, 0.7, {xPercent : 0, left:"0", ease: Power4.easeIn, delay : 0.9, force3D:true, onComplete : function(){        
         
@@ -203,12 +203,11 @@ export default {
 .projects__list {
   list-style: none;
   margin: 0 -1.7vw 0 -1.7vw;
-  padding: 7vw 0 6vw 0;  
-
+  padding: 7vw 0 6vw 0;
+  position: relative;
 }
 .projects__list li {
-  display: flex;  
-  margin-bottom: 30px;
+  display: flex;    
   position: relative;
 }
 .project__hover-left {
