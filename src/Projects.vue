@@ -156,7 +156,7 @@ export default {
     
   },
   methods : {
-    scrollList : function(clientY){
+    scrollList : function(clientY){      
       var app = this;      
       if(app.scrollListPermit){
         var y = clientY - 120;
@@ -170,41 +170,46 @@ export default {
     },
     projectHover : function(e){
       var app = this;
-      if(app.scrollListPermit && e.target.parentNode.className != 'hover'){
+      if(app.scrollListPermit && e.target.parentNode.className != 'hover'){        
         var slide = e.target.parentNode.getAttribute('data-slide');
         var name = '.projects__details_photo .'+e.target.parentNode.getAttribute('data-name');        
         TweenMax.set(document.querySelectorAll('.projects__details_photo-img:not(.current)'), {zIndex : '0'});
         TweenMax.set(document.querySelector('.projects__details_photo .current'), {zIndex : '1'});
-        document.querySelectorAll('.projects__details_photo-img').forEach(function(e, i) {          
-          e.classList.remove('current');
+        document.querySelectorAll('.projects__details_photo-img').forEach(function(e, i) {
+          if(e.className.indexOf('current') > -1){
+            e.classList.remove('current');  
+          }          
         });
         document.querySelector(name).classList.add('current');
         if(Number(slide) > Number(app.details.slide)){
-          TweenMax.set('.projects__details_photo-img.current', {top : '0', bottom : 'auto'});
+          TweenMax.fromTo('.projects__details_photo-img.current', 0.5, {y : '-100%'}, {y : '0%', ease: Power2.easeOut});          
         }else{
-          TweenMax.set('.projects__details_photo-img.current', {top : 'auto', bottom : '0'});
+          TweenMax.fromTo('.projects__details_photo-img.current', 0.5, {y : '100%'}, {y : '0%', ease: Power2.easeOut});          
         }
-        TweenMax.fromTo('.projects__details_photo-img.current', 0.5, {height : '0%'}, {height : '100%', ease: Power2.easeOut});
+        
 
         app.details.slide = slide;
-        
+
+
+
         document.querySelectorAll('.projects__list li').forEach(function(el, index) {
           if(el.className == 'hover'){
-            TweenMax.to(el.querySelectorAll('.tech b'), 0.3, {x : '-100%', ease: Power4.easeOut});
-            TweenMax.to(el.querySelectorAll('span'), 0.3, {left : '0', color : '#000000', opacity : 0.1, ease: Power4.easeOut});
+            TweenMax.to(el.querySelectorAll('.tech b'), 0.3, {x : '-100%', ease: Power1.easeOut});
+            TweenMax.to(el.querySelectorAll('span'), 0.3, {x : 0, color : '#000000', opacity : 0.1, ease: Power1.easeOut});
             el.classList.remove('hover');
           }          
         });        
         e.target.parentNode.classList.add('hover');
         TweenMax.to(e.target.parentNode.querySelectorAll('.tech b'), 0.2, {x : '0%', ease: Power2.easeOut});
-        TweenMax.to(e.target.parentNode.querySelector('.left span'), 0.2, {left : '6.2vw', color : '#ffffff', opacity : 1, ease: Power2.easeOut});
-        TweenMax.to(e.target.parentNode.querySelector('.right span'), 0.2, {left : '6.2vw', color : '#000000', opacity : 1, ease: Power2.easeOut});
+        TweenMax.to(e.target.parentNode.querySelector('.left span'), 0.2, {x : window.innerWidth / 100 * 6.2, color : '#ffffff', opacity : 1, ease: Power4.easeOut});
+        TweenMax.to(e.target.parentNode.querySelector('.right span'), 0.2, {x : window.innerWidth / 100 * 6.2, color : '#000000', opacity : 1, ease: Power4.easeOut});
       }      
     },
     enter: function () {
       var app = this;
       var silde = document.querySelectorAll('.projects__list li')[0].getAttribute('data-slide');
       document.querySelectorAll('.projects__details_photo-img')[0].classList.add('current');
+      TweenMax.set(document.querySelectorAll('.projects__details_photo-img'),{y : '-100%', ease: Power3.easeOut});
       app.details.slide = silde;      
       app.$emit('longAnimatePermit', false);
       var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
@@ -220,14 +225,11 @@ export default {
       TweenMax.fromTo('.projects__details', 0.7, {x : document.querySelector('.projects__details').clientWidth}, {x : 0, ease: Power4.easeIn, delay : 0.9,});
       TweenMax.to(l, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});
       TweenMax.to(r, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});
-
-      TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.9, {color : '#000000', delay : 1.2, onComplete : function(){
-        
+      TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.9, {color : '#000000', delay : 1.2, onComplete : function(){        
         document.querySelector('.projects__list li:first-child').classList.add('hover');
-        TweenMax.to(document.querySelector('.projects__details_photo .current'), 0.7, {height : '100%', ease: Power3.easeOut});
-        return false;
+        TweenMax.to(document.querySelector('.projects__details_photo .current'), 0.7, {y : '0%', ease: Power3.easeOut});        
         TweenMax.to(document.querySelectorAll('.projects__list li:first-child .tech b'), 0.7, {x : '0%', ease: Power2.easeOut});
-        TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {left : '6.2vw', ease: Power2.easeOut});
+        TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {x : (window.innerWidth / 100 * 6.2), ease: Power2.easeOut, force3D:true});
         TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.7, {opacity : 0.1, ease: Power2.easeOut, onComplete : function(){
           app.scrollListPermit = true;
         }});
@@ -301,8 +303,7 @@ export default {
   width: 200%;  
 }
 .projects__list li h2 span {
-  display: inline-block;
-  position: relative;
+  display: inline-block;  
 }
 .projects__list li .left h2 {  
   transform: rotate(-15deg) skewX(-15deg);
@@ -341,14 +342,14 @@ export default {
   overflow: hidden;  
 }
 .projects__details_photo-img {
-  width: 100%;  
+  width: 100%;    
+  height: 100%;
   position: absolute;
-  overflow: hidden;
   left: 0;
-  top: 0;  
+  top: 0;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: top center;
+  background-position: center top ;
 }
 .projects__details_photo-img.current {
   z-index: 2!important;
