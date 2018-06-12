@@ -229,12 +229,15 @@ export default {
         var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
         TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, ease: Power4.easeOut, force3D:true});
       });
-      TweenMax.fromTo('.projects__details', 0.7, {x : '100%'}, {x : '0%', ease: Power4.easeIn, delay : 0.9,});
+      TweenMax.fromTo('.projects__details', 0.7, {x : document.querySelector('.projects__details').clientWidth}, {x : 0, ease: Power4.easeIn, delay : 0.9,});
       TweenMax.to(l, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});
-      TweenMax.to(r, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});      
+      TweenMax.to(r, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9, force3D:true});
+
       TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.9, {color : '#000000', delay : 1.2, onComplete : function(){
+        
         document.querySelector('.projects__list li:first-child').classList.add('hover');
         TweenMax.to(document.querySelector('.projects__details_photo'), 0.7, {height : '100%', ease: Power3.easeOut});
+
         TweenMax.to(document.querySelectorAll('.projects__list li:first-child .tech b'), 0.7, {x : '0%', ease: Power2.easeOut});
         TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {left : '6.2vw', ease: Power2.easeOut});
         TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.7, {opacity : 0.1, ease: Power2.easeOut, onComplete : function(){
