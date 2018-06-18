@@ -73,7 +73,7 @@
           <div>
             <span>agency</span>
           </div>          
-        </div>    
+        </div>
         <div class="follow-us">
             <div class="follow-us_title">
               <span>Follow Us</span>
@@ -194,7 +194,7 @@ export default {
                         case 'projects':
                         app.projects();
                         app.cursor.color = '#b6b6b6';
-                        app.cursor.hoverColor = '#2af8eb';
+                        app.cursor.hoverColor = '#b6b6b6';
                         break;
                       default:
                         // statements_def
@@ -352,9 +352,11 @@ export default {
                 }});
               }});
             }
-          }else{            
+          }else{
             TweenMax.to('.preloader span', 1.3, {y : 50});            
-            TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+            TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn, onComplete : function(){
+              app.global.currentComponent = 'projects';
+            }});
             TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
             TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
             app.global.page = 'projects';
@@ -370,8 +372,7 @@ export default {
                   TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                   app.initDone = true;
                 }});
-              }});
-              app.global.currentComponent = 'projects';
+              }});              
               app.global.pager = '03';
               app.transitionPage = false;
             }});
@@ -472,8 +473,7 @@ export default {
             }
           }          
         },
-        mousewheel : function(e){
-          console.log(e);
+        mousewheel : function(e){          
           var app = this;          
           if(app.scroll){
             if(e.deltaY > 0){              
@@ -504,7 +504,7 @@ export default {
           case 'projects':
             this.projects();
             app.cursor.color = '#b6b6b6';
-            app.cursor.hoverColor = '#2af8eb';
+            app.cursor.hoverColor = '#b6b6b6';
             break;
           default:
             // statements_def
