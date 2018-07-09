@@ -148,10 +148,7 @@ export default {
       return t;
     }
   },
-  methods : {    
-    mousewheel : function(e){
-      console.log(e);
-    },
+  methods : {
     spanEnter : function(e){
       var app = this;      
       app.$emit('longAnimatePermit', false);
@@ -392,6 +389,20 @@ export default {
           TweenMax.to([this.$refs.l2, this.$refs.l4], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'},ease: Power3.easeOut});
           TweenMax.to([this.$refs.r2, this.$refs.r4], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'},ease: Power3.easeOut});
         }        
+    },
+    longLeave : function(){      
+        this.mouseMove = false;
+        TweenMax.to([this.$refs.l1, this.$refs.l2], 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r1, this.$refs.r2], 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.l2, this.$refs.l4], 2.1, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r2, this.$refs.r4], 2.1, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
+    },
+    longLeaveCancel : function(){
+        this.mouseMove = true;
+        TweenMax.to([this.$refs.l1, this.$refs.l3], 0.7, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r1, this.$refs.r3], 0.7, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.l2, this.$refs.l4], 0.7, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)'}, ease: Power2.easeIn});
+        TweenMax.to([this.$refs.r2, this.$refs.r4], 0.7, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)'}, ease: Power2.easeIn});
     },
     hoverLinks : function(e){
       console.log(e);
