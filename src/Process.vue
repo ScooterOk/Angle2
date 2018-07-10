@@ -377,18 +377,22 @@ export default {
       TweenMax.fromTo([this.$refs.r2, this.$refs.r4], 0.98, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power3.easeOut});
     },
     leave: function () {
-        this.mouseMove = false;
-        if(this.tabsActive){
+      var app = this;
+      return new Promise(function(resolve, reject) {
+        resolve();
+        app.mouseMove = false;
+        if(app.tabsActive){
           TweenMax.staggerTo(['.dash', '.ux', '.ui', '.lab'], 0.3, {y : -300, opacity : 0, ease: Power3.easeOut}, 0.1);
           TweenMax.to('.tab-description', 1, {x : 500, opacity : 0, ease: Power3.easeOut});
           TweenMax.to('.g-pager div', 0.3, {x : '0%', ease: Power4.easeInOut});  
           TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
         }else{
-          TweenMax.to([this.$refs.l1, this.$refs.l3], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'},ease: Power3.easeOut});
-          TweenMax.to([this.$refs.r1, this.$refs.r3], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'},ease: Power3.easeOut});
-          TweenMax.to([this.$refs.l2, this.$refs.l4], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'},ease: Power3.easeOut});
-          TweenMax.to([this.$refs.r2, this.$refs.r4], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'},ease: Power3.easeOut});
+          TweenMax.to([app.$refs.l1, app.$refs.l3], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'},ease: Power3.easeOut});
+          TweenMax.to([app.$refs.r1, app.$refs.r3], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'},ease: Power3.easeOut});
+          TweenMax.to([app.$refs.l2, app.$refs.l4], 2, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'},ease: Power3.easeOut});
+          TweenMax.to([app.$refs.r2, app.$refs.r4], 2, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'},ease: Power3.easeOut});
         }        
+      });        
     },
     longLeave : function(){      
         this.mouseMove = false;

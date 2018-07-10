@@ -70,11 +70,15 @@ export default {
         TweenMax.fromTo([this.$refs.r2, this.$refs.r4], 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
     },
     leave: function () {
-        this.mouseMove = false;
-        TweenMax.to([this.$refs.l1, this.$refs.l3], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([this.$refs.r1, this.$refs.r3], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([this.$refs.l2, this.$refs.l4], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([this.$refs.r2, this.$refs.r4], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
+      var app = this;
+      return new Promise(function(resolve, reject) {
+        resolve();
+        app.mouseMove = false;
+        TweenMax.to([app.$refs.l1, app.$refs.l3], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([app.$refs.r1, app.$refs.r3], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([app.$refs.l2, app.$refs.l4], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to([app.$refs.r2, app.$refs.r4], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
+      });        
     },
     longLeave : function(){      
         this.mouseMove = false;

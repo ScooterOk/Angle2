@@ -59,8 +59,7 @@
             <div>
               <span data-next="" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">outside</span>
             </div> 
-          </div>          
-          <div class="go-tonext__hover"></div>         
+          </div>                    
         </div>
         <div class="main-bg" ref="mainBg"></div>
         <div class="dda" ref="dda">            
@@ -147,16 +146,17 @@
 import Start from './Start.vue';
 import Process from './Process.vue';
 import Projects from './Projects.vue';
+import Contacts from './Contacts.vue';
 export default {
     name: 'app',  
-    mounted : function () {
-      console.log(this);
-        this.init();        
+    mounted : function () {        
+      this.init();
     },  
     components : {
         'home' : Start,
         'process' : Process,
-        'projects' : Projects
+        'projects' : Projects,
+        'contacts' : Contacts
     },
     computed: {
         preloaderPercent: function() {
@@ -196,6 +196,11 @@ export default {
                         app.cursor.color = '#b6b6b6';
                         app.cursor.hoverColor = '#ffffff';
                         break;
+                        case 'contacts':
+                        app.contacts();
+                        app.cursor.color = '#b6b6b6';
+                        app.cursor.hoverColor = '#2af8eb';
+                        break;
                       default:
                         // statements_def
                         break;
@@ -222,25 +227,26 @@ export default {
           var app = this;
           app.transitionPage = true;
           if(app.initDone){
-            this.$refs.currentComponent.leave();
-            TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
-            TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
-            TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
-              TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-              TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});              
-              TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
-                TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
-                TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
-                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
-                app.global.currentComponent = 'home';
-                app.global.page = 'home';
-                app.global.pager = '01';
-                app.transitionPage = false;
-                app.cursor.hoverActive = false;
-                app.scroll = true;
-              }});            
-            }});   
+            this.$refs.currentComponent.leave().then(function(){
+              TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});              
+                TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
+                  TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
+                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                  TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                  app.global.currentComponent = 'home';
+                  app.global.page = 'home';
+                  app.global.pager = '01';
+                  app.transitionPage = false;
+                  app.cursor.hoverActive = false;
+                  app.scroll = true;
+                }});            
+              }}); 
+            });              
           }else{
             TweenMax.to('.preloader span', 1.3, {y : 50});
             app.global.currentComponent = 'home';
@@ -283,23 +289,24 @@ export default {
                 }});
               }});
             }else{
-              this.$refs.currentComponent.leave();            
-              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
-              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
-                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-                app.global.page = 'process';
-                TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
-                  TweenMax.set(app.$el, {backgroundColor : '#000000'});
-                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
-                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                  TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
-                  app.global.currentComponent = 'process';
-                  app.global.pager = '02';
-                  app.transitionPage = false;
-                  app.scroll = true;
+              this.$refs.currentComponent.leave().then(function(){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+                TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                  TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                  app.global.page = 'process';
+                  TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
+                    TweenMax.set(app.$el, {backgroundColor : '#000000'});
+                    TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
+                    TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                    TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                    app.global.currentComponent = 'process';
+                    app.global.pager = '02';
+                    app.transitionPage = false;
+                    app.scroll = true;
+                  }});
                 }});
-              }});
+              });              
             }            
           }else{
             TweenMax.set(app.$refs.mainBg, {backgroundColor : '#000000', height : '100%', width : 0, x : 0});
@@ -361,24 +368,25 @@ export default {
                 }});
               }});
             }else{
-              this.$refs.currentComponent.leave();              
-              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
-              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
-                TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
-                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-                TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
-                  app.global.page = 'projects';
-                  TweenMax.set(app.$el, {backgroundColor : '#2af8eb'});
-                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
-                  TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                  TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
-                  app.global.currentComponent = 'projects';
-                  app.global.pager = '03';
-                  app.transitionPage = false;
-                  app.scroll = true;
+              this.$refs.currentComponent.leave().then(function(){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+                TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                  TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
+                  TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                  TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
+                    app.global.page = 'projects';
+                    TweenMax.set(app.$el, {backgroundColor : '#2af8eb'});
+                    TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+                    TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                    TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
+                    app.global.currentComponent = 'projects';
+                    app.global.pager = '03';
+                    app.transitionPage = false;
+                    app.scroll = true;
+                  }});
                 }});
-              }});
+              });
             }
           }else{
             TweenMax.to('.preloader span', 1.3, {y : 50});            
@@ -404,6 +412,54 @@ export default {
               app.global.pager = '03';
               app.transitionPage = false;
             }});
+          }
+        },
+        contacts : function(){
+          var app = this;
+          app.transitionPage = true;
+          TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
+          if(app.initDone){
+            this.$refs.currentComponent.leave().then(function(){
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+                TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                  TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
+                  TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                  TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
+                    app.global.page = 'contacts';
+                    TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
+                    TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+                    TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
+                    TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
+                    app.global.currentComponent = 'contacts';
+                    app.global.pager = '04';
+                    app.transitionPage = false;
+                    app.scroll = false;
+                  }});
+                }});
+              });
+          }else{
+            TweenMax.to('.preloader span', 1.3, {y : 50});
+            app.global.currentComponent = 'contacts';            
+            
+            //TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
+            app.global.page = 'contacts';            
+            TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
+            TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+            TweenMax.set([app.$refs.dda.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});              
+            TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13});
+            TweenMax.to('.preloader', 1.3, {height: 0, y : 0, ease: Power3.easeOut, onComplete : function(){
+              TweenMax.to('.g-pager div', 0.4, {x : 0});
+              TweenMax.to('.logo', 0.4, {y : 0});
+              TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+                TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
+                TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
+                app.initDone = true;
+              }});
+            }});              
+            app.global.pager = '04';
+            app.transitionPage = false; 
+            app.scroll = false;           
           }
         },
         cursorRing : function(e){            
@@ -526,7 +582,7 @@ export default {
       $route : function(c, p){        
         var app = this;        
         var name = c.name;
-        console.log(c);
+        console.log(c.name);
         switch (name) {
           case 'home':
             this.home();
@@ -542,6 +598,11 @@ export default {
             this.projects();
             app.cursor.color = '#b6b6b6';
             app.cursor.hoverColor = '#ffffff';
+            break;
+            case 'contacts':
+            this.contacts();
+            app.cursor.color = '#b6b6b6';
+            app.cursor.hoverColor = '#2af8eb';
             break;
           default:
             // statements_def

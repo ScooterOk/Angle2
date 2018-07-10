@@ -78,7 +78,7 @@
               </h2>
             </div>            
           </li>          
-        </ul>        
+        </ul>
       </div>
   </div>    
 </template>
@@ -779,7 +779,7 @@ export default {
       }
     },
     enter: function () {
-      var app = this;      
+      var app = this;       
       document.querySelectorAll('.projects__details_photo-img')[0].classList.add('current');
       TweenMax.set(document.querySelectorAll('.projects__details_photo-img'),{y : '-100%', ease: Power3.easeOut});
       
@@ -793,7 +793,7 @@ export default {
       r.forEach( function(e, i) {
         var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
         TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, ease: Power4.easeOut});
-      });            
+      });
 
 
       TweenMax.fromTo('.projects__details', 0.7, {x : document.querySelector('.projects__details').clientWidth}, {x : 0, ease: Power4.easeIn, delay : 2, onComplete : function(){        
@@ -815,7 +815,51 @@ export default {
           app.initDone = true;
         }});
       }      
+    },
+    leave: function () {
+      var app = this;
+      return new Promise(function(resolve, reject) {
+        app.scrollListPermit = false;
+        if(app.detailsActive){            
+          resolve();
+          TweenMax.set(document.querySelectorAll('.case-study span'), {css : {'transition-duration' : '0.5s', 'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
+          TweenMax.to(document.querySelectorAll('.projects__list li'), 0.4, {y : '-200%', opacity : 0, ease: Power4.easeInOut, delay : 0.15});
+          TweenMax.to(document.querySelectorAll('.case-study span'), 0.4, {y : 13, delay : 0.7, onComplete : function(){
+            TweenMax.to(document.querySelectorAll('.dda span'), 0.4, {y : 0, onComplete : function(){
+              
+            }});        
+          }});
+          TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+          TweenMax.to(['.projects__details', '.projects__details_content', '.projects__details_client', '.projects__details_output', '.projects__details_fields', 'projects__details_link'], 0.5, {opacity : 0, onComplete : function(){
+            TweenMax.to('.g-pager div', 0.4, {x : 0});
+          }});          
+        }else{
+          TweenMax.to(document.querySelectorAll('.projects__list li .left span'), 1, {color : '#ffffff', opacity : 1});
+          TweenMax.to(document.querySelectorAll('.projects__list li .right span'), 1, {color : '#000000', opacity : 1});
+          TweenMax.to(document.querySelectorAll('.tech b'), 0.3, {opacity : 0, ease: Power3.easeInOut});
+          TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+          var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
+          var r = document.querySelectorAll('.projects__list li:nth-child(even) span');
+          l.forEach( function(e, i) {
+            var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
+            TweenMax.to(e, 1, {x : x, ease: Power3.easeOut, onComplete : function(){              
+              resolve();
+              TweenMax.to(e, 2, {x : -(e.clientWidth+100), ease: Power3.easeOut});
+            }});
+          });
+          r.forEach( function(e, i) {
+            var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);
+            TweenMax.to(e, 1, {x : x, ease: Power3.easeOut, onComplete : function(){
+              TweenMax.to(e, 2, {x : e.parentNode.clientWidth, ease: Power3.easeOut});
+            }});
+          });
+          TweenMax.to('.projects__details', 0.5, {opacity : 0, ease: Power3.easeOut, onComplete : function(){
+            
+          }});
+        }        
+      });      
     }
+
   }
 }
 </script>
@@ -825,6 +869,9 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+.projects header nav a::after, .projects header .lng a::after {    
+    background-color: #ffffff;    
 }
 .projects__scene {
   padding: 0;  
@@ -836,6 +883,8 @@ export default {
   margin: 0 -1.7vw 0 -1.7vw;  
   padding-top: calc(12vw + 120px);
   padding-bottom: 6vw;
+  padding-left: 0;
+  padding-right: 0;
 }
 .projects__list li {
   display: flex;    
