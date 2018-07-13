@@ -1,7 +1,7 @@
 <template>
   <div id="app-contacts" v-resize="onResize">
       <ul class="contacts__title">
-        <li>
+        <li data-type="title">
           <div class="left">
             <h1>
               <span v-html="title"></span>
@@ -11,118 +11,290 @@
             <h1>
               <span v-html="title"></span>
             </h1>
-          </div>            
-        </li>          
+          </div>
+        </li>
+        <li data-type="thankyou">
+          <div class="left">
+            <h1>
+              <span v-html="thankYouTitle"></span>
+            </h1>
+          </div>
+          <div class="right">
+            <h1>
+              <span v-html="thankYouTitle"></span>
+            </h1>
+          </div>
+        </li>
       </ul>
-      <article class="contacts__wrapper">
-        <div class="contacts__wrapper_side">
-          <ul class="contacts__wrapper_side-list">
-            <li>
-              <h2>
-                <span>Our phone</span>
-              </h2>
-              <div class="contacts__wrapper_side-info">
-                <span>+380 63 349 6219</span>
-              </div>
-            </li>
-            <li>
-              <h2>
-                <span>>Our email</span>
+      <form action="https://getsimpleform.com/messages?form_api_token=f0a718c17dd9cd16c17730eae1104cd9" method="post" @submit="formSubmit">
+        <article class="contacts__wrapper">
+          <div class="contacts__wrapper_side">
+            <ul class="contacts__wrapper_side-list">
+              <li>
+                <h2>
+                  <span>Our phone</span>
                 </h2>
-              <div class="contacts__wrapper_side-info">
-                <span>hi@angle2.com</span>
-              </div>
-            </li>
-            <li>
-              <h2>
-                <span>Our skype</span>
-              </h2>
-              <div class="contacts__wrapper_side-info">
-                <span>lazey.lazey</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="contacts__wrapper_side form">
-          <div class="contacts__from-name">
-            <div class="contacts__from-input">
+                <div class="contacts__wrapper_side-info">
+                  <span>+380 63 349 6219</span>
+                </div>
+              </li>
+              <li>
+                <h2>
+                  <span>Our email</span>
+                  </h2>
+                <div class="contacts__wrapper_side-info">
+                  <span>hi@angle2.com</span>
+                </div>
+              </li>
+              <!--li>
+                <h2>
+                  <span>Our skype</span>
+                </h2>
+                <div class="contacts__wrapper_side-info">
+                  <span>lazey.lazey</span>
+                </div>
+              </li-->
+            </ul>
+          </div>        
+          <div class="contacts__wrapper_side form">
+            <div class="contacts__from-name">
+              <div class="contacts__from-input">
+                <label>
+                  <span class="text">{{form.name.text}}</span>
+                  <span class="error">{{form.name.errorText}}</span>
+                </label>
+                <input type="text" @focus="inputFocusBlur" @blur="inputFocusBlur" name="name">
+                <i></i>
+              </div>            
+            </div>
+            <div class="contacts__from-mail">
+              <div class="contacts__from-input">
+                <label>
+                  <span class="text">{{form.email.text}}</span>
+                  <span class="error">{{form.email.errorText}}</span>
+                </label>
+                <input type="email" @focus="inputFocusBlur" @blur="inputFocusBlur" name="email">
+                <i></i>
+              </div>            
+            </div>
+            <div class="contacts__from-message">
               <label>
-                <span>Your name</span>
+                <span class="text">{{form.msg.text}}</span>
+                  <span class="error">{{form.msg.errorText}}</span>
               </label>
-              <input type="text" name="name">
+              <textarea @focus="textareaFocusBlur" @blur="textareaFocusBlur" @mousewheel="mousewheel"></textarea>
               <i></i>
-            </div>            
-          </div>
-          <div class="contacts__from-mail">
-            <div class="contacts__from-input">
-              <label>
-                <span>Your e-mail</span>
-              </label>
-              <input type="text" name="name">
+            </div>
+            <div class="contacts__from-send">            
+              <button @mouseenter="hoverLinks" @mouseleave="hoverLinks">
+                <div>
+                  <span>Send</span>
+                </div>
+              </button>
               <i></i>
-            </div>            
+            </div>
           </div>
-          <div class="contacts__from-message">
-            <label>
-              <span>Type your message</span>
-            </label>
-            <textarea></textarea>
-            <i></i>
-          </div>
-          <div class="contacts__from-send">            
-            <button>
-              <div>
-                <span>Send</span>
-              </div>
-            </button>
-            <i></i>
-          </div>
-        </div>
-      </article>
+          <aside class="contacts__thankyou">
+            <h3>
+              <span>We will contact you shortly!</span>
+            </h3>
+            <div class="contacts__thankyou_link" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
+              <router-link to="/">
+                <span>Go home</span>
+              </router-link>
+              <i></i>
+            </div>
+          </aside>
+        </article>
+      </form>      
   </div>    
 </template>
 
 <script>
 import resize from 'vue-resize-directive';
+if (!String.prototype.trim) {
+  (function() {    
+    String.prototype.trim = function() {
+      return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+  })();
+}
 export default {    
   props : ['cursor'],
   directives: {
     resize
   },
-  computed : {    
+  computed : {
     
-  },  
-  mounted : function () {      
-    this.enter();    
+  },
+  mounted : function () {
+    this.enter();
   },
   data () {
-    return {      
+    return {
       initDone : false,
-      title : 'Let\'s meet'
-    }    
-  },  
+      title : 'Let\'s meet',
+      thankYou : false,
+      thankYouTitle : 'thank you',
+      form : {
+        name : {
+          text : 'Your name',
+          error : false,
+          errorText : 'Enter your name'
+        },
+        email : {
+          text : 'Your e-mail',
+          error : false,
+          errorText : 'Enter your email'
+        },
+        msg : {
+          text : 'Type your message',
+          error : false,
+          errorText : 'Enter your message'
+        }        
+      }
+    }
+  },
   watch : {
     
-  },  
-  methods : {    
-    
-    
-    
-    
-    
-    
-    onResize : function(e){
+  },
+  methods : {
+    inputFocusBlur : function(e){
       var app = this;
+      var target = e.currentTarget;
+      var name = target.name;      
+      if(e.type == 'focus'){
+        console.log(app.form[name].error);
+        if(app.form[name].error){          
+          TweenMax.to(target.parentNode.querySelector('i'), 0.5, {backgroundColor : '#000000'});          
+          TweenMax.to(target.parentNode.querySelector('.error'), 0.5, {y : '100%', ease: Power3.easeOut});
+          app.form[name].error = false;
+        }else{
+          if(!target.value.trim().length)TweenMax.to(target.parentNode.querySelector('.text'), 0.2, {y : '100%'});
+        }        
+      }else if(e.type == 'blur'){
+        if(app.form[name].error){
+          if(!target.value.trim().length)TweenMax.to(target.parentNode.querySelector('.text'), 0.2, {y : '0%'});
+        }else{
+          if(!target.value.trim().length)TweenMax.to(target.parentNode.querySelector('.text'), 0.2, {y : '0%'});
+        }
+        
+      }
+    },
+    textareaFocusBlur : function(e){
+      var app = this;
+      var target = e.currentTarget;
+      if(e.type == 'focus'){
+        if(app.form.msg.error){
+          TweenMax.to(target.parentNode.querySelector('i'), 0.5, {backgroundColor : '#000000'});          
+          TweenMax.to(target.parentNode.querySelector('.error'), 0.5, {y : '100%', ease: Power3.easeOut});
+          TweenMax.to(target.parentNode, 0.2, {height : 90});
+          app.form.msg.error = false;
+        }else{
+          if(!target.value.trim().length){
+            TweenMax.to(target.parentNode, 0.2, {height : 90});
+            TweenMax.to(target.parentNode.querySelectorAll('.text'), 0.2, {y : '100%'});
+          }
+        }        
+      }else if(e.type == 'blur'){
+        if(!target.value.trim().length){
+          TweenMax.to(target.parentNode, 0.2, {height : 45});
+          TweenMax.to(target.parentNode.querySelectorAll('.text'), 0.2, {y : '0%'});
+        }        
+      }
+    },
+    mousewheel : function(e){
+      console.log(e.deltaY);
+      if(e.deltaY > 0){
+        e.target.scrollTop += 50;
+      }else{
+        e.target.scrollTop -= 50;
+      }
+    },
+    hoverLinks : function(e){
+      var app = this;      
+      if(e.type == 'mouseenter'){        
+        TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
+        TweenMax.to('.progress-ring__circle', 0.2, {stroke : '#2af8eb'});
+      }else{        
+        TweenMax.to('.cursor-ring', 0.2, {scale : 1});
+        TweenMax.to('.progress-ring__circle', 0.2, {stroke : '#b6b6b6'});
+      }      
+    },
+    formSubmit : function(e){
+      e.preventDefault();
+      var name = e.target.querySelector('input[name="name"]').value.trim();
+      var email = e.target.querySelector('input[name="email"]').value.trim();
+      var msg = e.target.querySelector('textarea').value.trim();
+      var app = this;
+      var x = document.querySelector('.contacts__title li[data-type="title"] h1 span').parentNode.clientWidth;
+      var th = document.querySelector('.contacts__title li[data-type="thankyou"] h1 span');      
+      if(!name.length){
+        TweenMax.to('.contacts__from-name i', 0.5, {backgroundColor : '#ff0000'});
+        TweenMax.set('.contacts__from-name .error', {y : '100%', display : 'block'});
+        TweenMax.to('.contacts__from-name .text', 0.5, {y : '100%', ease: Power3.easeInOut});
+        TweenMax.to('.contacts__from-name .error', 0.5, {y : '0%', ease: Power3.easeInOut});
+        app.form.name.error = true;
+      }
+      if(!email.length){
+        TweenMax.to('.contacts__from-mail i', 0.5, {backgroundColor : '#ff0000'});
+        TweenMax.set('.contacts__from-mail .error', {y : '100%', display : 'block'});
+        TweenMax.to('.contacts__from-mail .text', 0.5, {y : '100%', ease: Power3.easeInOut});
+        TweenMax.to('.contacts__from-mail .error', 0.5, {y : '0%', ease: Power3.easeInOut});
+        app.form.email.error = true;
+      }
+      if(!msg.length){
+        TweenMax.to('.contacts__from-message i', 0.5, {backgroundColor : '#ff0000'});
+        TweenMax.set('.contacts__from-message .error', {y : '100%', display : 'block'});
+        TweenMax.to('.contacts__from-message .text', 0.5, {y : '100%', ease: Power3.easeInOut});
+        TweenMax.to('.contacts__from-message .error', 0.5, {y : '0%', ease: Power3.easeInOut});
+        app.form.msg.error = true;
+      }
+      if(!name.length || !email.length || !msg.length)return false;
       
+      TweenMax.set(document.querySelectorAll('.contacts__title li[data-type="thankyou"]'), {visibility : 'visible'});
+      TweenMax.to(document.querySelectorAll('.contacts__title li[data-type="title"] h1 span'), 1.5, {x : x, ease: Power4.easeInOut});
+      TweenMax.fromTo(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), 1.5, {x : -(th.clientWidth+100)}, {x : 0, ease: Power4.easeInOut});
+      TweenMax.to(['.contacts__wrapper_side'], 1, {opacity : 0, onComplete : function(){
+        TweenMax.set(['.contacts__wrapper_side.form'], {display : 'none'});
+        TweenMax.set('.contacts__thankyou', {display : 'block'});
+        TweenMax.set(['.contacts__thankyou h3 span', '.contacts__thankyou_link a span'], {y : '100%'});
+        TweenMax.to('.contacts__thankyou h3 span', 0.5, {y : '0%'});
+        TweenMax.to('.contacts__thankyou_link i', 0.5, {width : '100%', onComplete : function(){
+          TweenMax.to('.contacts__thankyou_link a span', 0.5, {y : '0%'});
+          app.thankYou = true;
+        }});
+      }});
+
+      
+      
+      
+      var data = {
+        Name : name,
+        Email : email,
+        Message : msg
+      }            
+      app.$http.jsonp('http://getsimpleform.com/messages/ajax?form_api_token=f0a718c17dd9cd16c17730eae1104cd9', {params : data, method : 'POST'}).then(function(response){        
+        
+      }, function(response){
+        
+      });
+      
+    },
+    onResize : function(e){
+      var app = this;      
     },
     enter: function () {
       var app = this; 
       app.$emit('longAnimatePermit', false);      
       TweenMax.set(document.querySelectorAll(['.contacts__wrapper_side-list h2 span', '.contacts__wrapper_side-info span', '.contacts__from-send button span']), {y : '100%'});
-      TweenMax.set(document.querySelectorAll(['.contacts__from-name label', '.contacts__from-mail label', '.contacts__from-message label']), {opacity : 0});
-      var t = document.querySelector('.contacts__title h1 span');      
-      TweenMax.fromTo(document.querySelectorAll('.contacts__title h1 span'), 1.5, {x : -(t.clientWidth+100)}, {x : 0, ease: Power4.easeOut, onComplete : function(){
-        TweenMax.staggerTo(document.querySelectorAll(['.contacts__wrapper_side-list li h2 span', '.contacts__wrapper_side-info span']), 0.3, {y : '0%', ease: Power3.easeOut}, 0.1, formInit);
+      TweenMax.set(document.querySelectorAll(['.contacts__from-name label', '.contacts__from-mail label', '.contacts__from-message label']), {opacity : 0});      
+      var tl = document.querySelector('.contacts__title li[data-type="title"] h1 span');
+      var th = document.querySelector('.contacts__title li[data-type="thankyou"] h1 span');
+      TweenMax.set(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), {x : -(th.clientWidth+100)});
+      TweenMax.set(document.querySelectorAll('.contacts__title li[data-type="thankyou"]'), {visibility : 'hidden'});
+
+      TweenMax.staggerTo(document.querySelectorAll(['.contacts__wrapper_side-list li h2 span', '.contacts__wrapper_side-info span']), 0.3, {y : '0%', ease: Power3.easeOut, delay : 1}, 0.1, formInit);
         function formInit(){
           TweenMax.to(document.querySelectorAll(['.contacts__from-name i', '.contacts__from-mail i', '.contacts__from-message i']), 0.5, {width : '100%', onComplete : function(){
             TweenMax.to(document.querySelectorAll(['.contacts__from-name label', '.contacts__from-mail label', '.contacts__from-message label']), 0.5, {opacity : 1, onComplete : function(){
@@ -133,10 +305,32 @@ export default {
             TweenMax.to('.contacts__from-send button span', 0.5, {y : '0%'});
           }});
         }
-      }});      
+
+      TweenMax.fromTo(document.querySelectorAll('.contacts__title li[data-type="title"] h1 span'), 1.5, {x : -(tl.clientWidth+100)}, {x : 0, ease: Power4.easeOut});
     },
     leave: function () {
-      
+      var app = this; 
+      return new Promise(function(resolve, reject) {
+        if(app.thankYou){
+          var t = document.querySelector('.contacts__title li[data-type="thankyou"] h1 span');
+          TweenMax.to('.contacts__thankyou', 0.5, {opacity : 0, onComplete : function(){
+            resolve();
+            TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+            TweenMax.to(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), 1.5, {x : -(t.clientWidth+100), ease: Power4.easeOut});
+          }});
+
+          
+        }else{
+          var t = document.querySelector('.contacts__title h1 span');
+          TweenMax.to(document.querySelectorAll(['.contacts__wrapper_side-list h2 span', '.contacts__wrapper_side-info span', '.contacts__from-send button span']), 0.5, {y : '100%'});
+          TweenMax.to(document.querySelectorAll(['.contacts__from-name label', '.contacts__from-name input', '.contacts__from-mail label', '.contacts__from-mail input', '.contacts__from-message label', '.contacts__from-message textarea']), 0.5, {opacity : 0, onComplete : function(){
+            resolve();
+            TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
+            TweenMax.to(document.querySelectorAll(['.contacts__from-name i', '.contacts__from-mail i', '.contacts__from-message i']), 0.5, {width : '0%'})
+            TweenMax.to(document.querySelectorAll('.contacts__title h1 span'), 1.5, {x : -(t.clientWidth+100), ease: Power4.easeOut});
+          }});
+        }        
+      });  
     }
   }
 }
@@ -161,6 +355,9 @@ export default {
   position: relative;
   height: 21.3vw;  
 }
+.contacts__title li[data-type="thankyou"] {
+  margin-top: -21.3vw;
+}
 .contacts__title li .left {
   width: 50%;
   overflow: hidden;
@@ -179,8 +376,7 @@ export default {
   text-transform: uppercase;
   font-weight: 900;
   letter-spacing: -.45vw;
-  width: 200%;
-  cursor: pointer;
+  width: 200%;  
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -207,6 +403,7 @@ export default {
 }
 .contacts__wrapper_side.form {  
   justify-content: space-between;
+  padding-top: 8px;
 }
 .contacts__wrapper_side-list {
   list-style: none;
@@ -230,7 +427,7 @@ export default {
 }
 .contacts__wrapper_side-info {
   font-size: 18px;
-  line-height: 1;
+  line-height: 1.1;
   font-weight: 300;
   overflow: hidden;
 }
@@ -260,6 +457,8 @@ export default {
 .contacts__from-name label {
   display: block;
   font-size: 18px;
+  width: 100%;
+  height: 18px;
   line-height: 1;
   font-weight: 300; 
   color: #979797;
@@ -269,8 +468,15 @@ export default {
   left: 0;
   z-index: 1;  
 }
-.contacts__from-name label span {
-  display: inline-block;
+.contacts__from-input label span {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.contacts__from-input label span.error {
+  color: #ff0000;
+  display: none;
 }
 .contacts__from-name i {
   display: block;
@@ -301,6 +507,8 @@ export default {
 .contacts__from-mail label {
   display: block;
   font-size: 18px;
+  width: 100%;
+  height: 18px;
   line-height: 1;
   font-weight: 300; 
   color: #979797;
@@ -331,6 +539,8 @@ export default {
 .contacts__from-message label {
   display: block;
   font-size: 18px;
+  width: 100%;
+  height: 18px;
   line-height: 1;
   font-weight: 300; 
   color: #979797;
@@ -341,13 +551,20 @@ export default {
   z-index: 1; 
 }
 .contacts__from-message label span {
-  display: inline-block;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.contacts__from-message label span.error {
+  color: #ff0000;
+  display: none;
 }
 .contacts__from-message textarea {
   background: transparent;
-  padding: 0;
+  padding: 9px 10px 0px 0;
   font-size: 18px;
-  line-height: 45px;
+  line-height: 27px;
   font-weight: 300;
   color: #000;
   width: 100%;  
@@ -357,6 +574,7 @@ export default {
   outline: none;
   position: relative;
   z-index: 2;
+  display: block;
 }
 .contacts__from-message i {
   display: block;
@@ -379,8 +597,10 @@ export default {
   color: #000;
   padding: 0;
   text-align: center;
+  cursor: pointer;
 }
 .contacts__from-send button div {
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   line-height: 1;
   font-weight: 300;
@@ -390,6 +610,50 @@ export default {
   display: inline-block;
 }
 .contacts__from-send i {
+  display: block;
+  height: 1px;
+  width: 0%;
+  background: #2af8eb;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.contacts__thankyou {
+  display: none;
+}
+.contacts__thankyou h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 300;
+  overflow: hidden;
+}
+.contacts__thankyou h3 span {
+  display: inline-block;
+}
+.contacts__thankyou_link {
+  margin-top: 30px;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 300;  
+  display: inline-block;
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+.contacts__thankyou_link a {
+  color: #000;
+  display: block;
+  line-height: 1;
+  overflow: hidden;
+}
+.contacts__thankyou_link a span {
+  display: inline-block;
+}
+
+.contacts__thankyou_link i {
   display: block;
   height: 1px;
   width: 0%;

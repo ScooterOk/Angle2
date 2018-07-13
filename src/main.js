@@ -1,6 +1,9 @@
+import './assets/css/normalize.css';
+import './assets/css/vue2-scrollbar.css';
 import {TweenMax, Power2, TimelineLite} from "gsap";
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import VueResource from 'vue-resource'
 import App from './App.vue';
 import Start from './Start.vue';
 import Process from './Process.vue';
@@ -8,7 +11,9 @@ import Projects from './Projects.vue';
 import Contacts from './Contacts.vue';
 
 Vue.use(VueRouter);
-router = new VueRouter({	
+Vue.use(VueResource);
+Vue.http.options.emulateJSON = true;
+router = new VueRouter({
 	routes : [
 		{path: '/', name : 'home', component : Start },
 		{path: '/process', name : 'process', component : Process },

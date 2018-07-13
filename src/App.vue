@@ -1,5 +1,11 @@
 <template>
     <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">
+        <div class="mobile-coming">
+          <div>
+            <img src="./assets/img/short_logo_white.svg" alt="">
+            <h5>coming soon</h5>            
+          </div>
+        </div>
         <svg class="cursor-ring" width="60" height="60" @mouseenter="cursorRingHover">
             <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
         </svg>
@@ -30,7 +36,7 @@
                   </svg>
                 </router-link>
             </div>
-            <nav class="clearfix">
+            <nav>
                 <div class="process" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <router-link to="/process">Process</router-link>
                 </div>
@@ -41,9 +47,9 @@
                   <router-link to="/contacts">Contact Us</router-link>
                 </div>                
             </nav>
-            <div class="lng" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
+            <!--div class="lng" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
               <a href="">Ukr</a>
-            </div>
+            </div-->
         </header>        
         <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
@@ -451,7 +457,7 @@ export default {
             TweenMax.to('.preloader', 1.3, {height: 0, y : 0, ease: Power3.easeOut, onComplete : function(){
               TweenMax.to('.g-pager div', 0.4, {x : 0});
               TweenMax.to('.logo', 0.4, {y : 0});
-              TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+              TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
                 TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                 TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                 app.initDone = true;
@@ -515,7 +521,7 @@ export default {
               TweenMax.to('.cursor-ring', 0.2, {scale : 1});
               TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
             }
-          }            
+          }
         },
         hoverNext : function(e){
           var app = this;
@@ -562,7 +568,7 @@ export default {
           }          
         },
         mousewheel : function(e){          
-          var app = this; 
+          var app = this;          
           app.cursor.mousewheel = e;          
           if(app.scroll && !app.transitionPage){
             if(e.deltaY > 0){
@@ -572,9 +578,8 @@ export default {
             }
           }else{
             e.preventDefault();
-            return false;  
+            return false;
           }
-          console.log(app.scroll);
           e.preventDefault();
         }
     },
@@ -731,14 +736,15 @@ header .logo #logo .st0 {
 header nav {    
     margin-top: 66px;
     position: absolute;
-    left: 50%;    
+    left: 50%;
+    width: calc(50% - 5vw);
+    display: flex;
+    justify-content: space-between;
 }
-header nav div {
-  float: left;
+header nav div {  
   font-size: 18px;
   line-height: 1;
-  font-weight: 300;
-  margin-left: 3.6vw;
+  font-weight: 300;  
   letter-spacing: -0.5px;
 }
 header nav div:first-child {
@@ -951,6 +957,44 @@ header .logo #logo .st0,
 .process #facebook .st0,
 .process #instagram .st0 {
   fill: #fff;
+}
+
+.mobile-coming {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;  
+  z-index: 100;
+  background: #000;
+  display: none;
+  text-align: center;
+  flex-wrap: wrap;
+  align-items: center;  
+}
+.mobile-coming > div {
+  width: 100%;
+  text-align: center;
+}
+.mobile-coming h5 {
+  width: 100%;
+  color: #fff;
+  margin: 5vw 0 0 0;
+  padding: 0;
+  text-align: center;
+  font-size: 10vw;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.mobile-coming img {
+  width: 45vw;
+  opacity: 0.7;
+}
+
+@media screen and (max-width: 1024px) {
+  .mobile-coming {
+    display: flex;
+  }
 }
 
 </style>

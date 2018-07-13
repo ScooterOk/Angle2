@@ -69,12 +69,18 @@
                 <div class="tech">
                   <b v-for="tech in project.tech">{{tech}}</b>
                 </div>
-                <span v-html="project.name"></span>
+                <router-link to="/contacts" v-if="project.dataName == 'contacts'">
+                  <span v-html="project.name"></span>
+                </router-link>
+                <span v-html="project.name" v-else></span>                
               </h2>
             </div>
             <div class="right">
               <h2 @mouseenter="projectHover($event, project.dataName, index+1)" @mouseleave="projectHover($event, project.dataName, index+1)" @click="showDetails" :data-name="project.dataName">
-                <span v-html="project.name"></span>
+                <router-link to="/contacts" v-if="project.dataName == 'contacts'">
+                  <span v-html="project.name"></span>
+                </router-link>
+                <span v-html="project.name" v-else></span>
               </h2>
             </div>            
           </li>          
@@ -85,7 +91,7 @@
 
 <script>
 import resize from 'vue-resize-directive';
-export default {    
+export default {
   props : ['mouseY', 'cursor'],
   directives: {
     resize
@@ -156,11 +162,11 @@ export default {
       return t;
     },
     nextImgCase : function(){
+      var img = '';
       if(this.details.current){
-        var next = document.querySelector('.projects__list li[data-name="'+this.details.current+'"]+li').getAttribute('data-name');
-        var img = 'хуй';
+        var next = document.querySelector('.projects__list li[data-name="'+this.details.current+'"]+li').getAttribute('data-name');        
         for(var i in this.projects){
-          if(this.projects[i].dataName == next)img = this.projects[i].url;          
+          //if(this.projects[i].dataName == next)img = this.projects[i].url;          
         }
       }
       return img;
@@ -168,8 +174,7 @@ export default {
   },  
   mounted : function () {  
     this.projectsListText();
-    this.enter();
-    console.log(this.projects);
+    this.enter();    
   },
   data () {
     return {      
@@ -412,11 +417,9 @@ export default {
       }else{
         if(!e.currentTarget.parentNode.parentNode.classList.contains('hover') && !app.details.caseTransition){
           if(e.type == 'mouseenter'){            
-            TweenMax.to('.projects__list_next-preview', 0.5, {x : -document.querySelector('.projects__list_next-preview').clientWidth, ease: Power2.easeOut});
-            console.log('mouseenter');
+            TweenMax.to('.projects__list_next-preview', 0.5, {x : -document.querySelector('.projects__list_next-preview').clientWidth, ease: Power2.easeOut});            
           }else{            
-            TweenMax.to('.projects__list_next-preview', 0.5, {x : 0, ease: Power2.easeOut});
-            console.log('mouseleave');
+            TweenMax.to('.projects__list_next-preview', 0.5, {x : 0, ease: Power2.easeOut});            
           }          
         }        
       }
@@ -424,10 +427,8 @@ export default {
     showDetails : function(e){
       var app = this;
       var currentTarget = e.currentTarget;      
-      var name = currentTarget.getAttribute('data-name');
-      console.log(app.detailsActive);
-      if(!app.detailsActive){
-        console.log('Open');
+      var name = currentTarget.getAttribute('data-name');      
+      if(!app.detailsActive){        
         if(!app.initDone || app.initDone && (app.detailsActive && currentTarget.parentNode.parentNode.className == 'hover'))return false;
         app.detailsActive = true;
         app.details.caseTransition = true;
@@ -517,10 +518,11 @@ export default {
                   TweenMax.to(next.querySelectorAll('h2 span'), 0.3, {y : '0%', opacity : 1, ease: Power1.easeOut, onComplete : function(){
                     app.details.caseTransition = false;
                   }});
-                }else{                                    
+                }else{
                   app.projects.push({
                     name : 'Contact Us',
-                    dataName : 'contacts'
+                    dataName : 'contacts',
+                    url : ''
                   });
                   setTimeout(function(){
                     next = document.querySelector('.projects__list li[data-name="contacts"]');
@@ -534,8 +536,7 @@ export default {
                 TweenMax.set(document.querySelectorAll('.projects__details_fields-text span'), {clearProps : 'all'});
                 TweenMax.set(['.projects__details_fields', '.projects__details_link'], {visibility : 'visible'});
                 TweenMax.set(document.querySelectorAll('.projects__details_link span'), {opacity : 0});
-                TweenMax.fromTo('.projects__details_fields h4 div', 0.5, {y : '100%'}, {y : '0%', onComplete : function(){
-                  console.log('хуй');
+                TweenMax.fromTo('.projects__details_fields h4 div', 0.5, {y : '100%'}, {y : '0%', onComplete : function(){                  
                   TweenMax.staggerFromTo(document.querySelectorAll('.projects__details_fields-text span'), 0.4, {opacity : 0, x : -50,  y:75, scale : 0, rotationY: 90, rotationZ:90, transformOrigin : '0 50% 0'}, {opacity : 1, x : 0,  y:0, scale : 1, rotationY: 0, rotationZ:0, transformOrigin : '0 50% 0', ease: Power2.easeOut}, 0.08);
                 }});
                 TweenMax.fromTo('.projects__details_link-border', 0.5, {width : '0'}, {width : '100%', onComplete : function(){
@@ -546,7 +547,7 @@ export default {
           }});
         }});
       }else{        
-        if(currentTarget.parentNode.parentNode.classList.contains('hover')) return false;
+        if(currentTarget.parentNode.parentNode.classList.contains('hover') || name == 'contacts') return false;
         app.details.caseTransition = true;
         app.scrollDetailsPermit = false;
         var nextSlide = Number(app.details.slide)+1;
@@ -728,7 +729,7 @@ export default {
       }})      
     },
     hoverLinks : function(e, color){
-      var app = this;      
+      var app = this;
       if(!color)color = app.cursor.hoverColor;      
       if(e.type == 'mouseenter'){        
         TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
@@ -751,8 +752,7 @@ export default {
           app.sceneTop += (val.deltaY / 2);
         }else if(app.sceneTop > max){
           app.sceneTop = max;
-        }
-        console.log(val.deltaY);
+        }        
         TweenMax.to('.projects__scene', 0.7, {y : -app.sceneTop});
       }      
     },
@@ -776,6 +776,7 @@ export default {
         TweenMax.set(document.querySelector('.projects__list li.hover'), {y : -yCurrent});
       }else{
         TweenMax.to(app.$refs.list, 0.6, {y : 0,});
+        app.listTop = 0;
       }
     },
     enter: function () {
@@ -841,7 +842,7 @@ export default {
           var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
           var r = document.querySelectorAll('.projects__list li:nth-child(even) span');
           l.forEach( function(e, i) {
-            var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
+            var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);
             TweenMax.to(e, 1, {x : x, ease: Power3.easeOut, onComplete : function(){              
               resolve();
               TweenMax.to(e, 2, {x : -(e.clientWidth+100), ease: Power3.easeOut});
@@ -898,14 +899,18 @@ export default {
 .projects__list li .left {
   width: 50%;
   overflow: hidden;  
-  color: #fff;  
-  
+  color: #fff;
+}
+.projects__list li .left a {
+  color: #fff;
 }
 .projects__list li .right {
   width: 50%;
   overflow: hidden;  
-  color: #000;
-  
+  color: #000;  
+}
+.projects__list li .right a {
+  color: #000;   
 }
 .projects__list li h2 {
   font-size: 10.7vw;
