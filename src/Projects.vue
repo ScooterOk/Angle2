@@ -166,7 +166,7 @@ export default {
       if(this.details.current){
         var next = document.querySelector('.projects__list li[data-name="'+this.details.current+'"]+li').getAttribute('data-name');        
         for(var i in this.projects){
-          //if(this.projects[i].dataName == next)img = this.projects[i].url;          
+          if(this.projects[i].dataName == next)img = this.projects[i].url;
         }
       }
       return img;
