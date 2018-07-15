@@ -85,14 +85,14 @@
             </div>
             <ul class="clearfix">
                 <li class="be" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
-                    <a href="">
+                    <a href="https://www.behance.net/Angle2" target="_blank">
                         <svg version="1.1" id="behance-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="22px" height="14px" viewBox="0 0 22 14" style="enable-background:new 0 0 22 14;" xml:space="preserve">
                         <path class="st0" d="M6.2,0.3c0.6,0,1.2,0.1,1.7,0.2s1,0.3,1.3,0.5c0.4,0.3,0.7,0.6,0.9,1s0.3,0.9,0.3,1.5c0,0.7-0.1,1.2-0.5,1.7C9.7,5.7,9.2,6,8.6,6.3c0.8,0.2,1.4,0.6,1.8,1.2C10.8,8.1,11,8.8,11,9.6c0,0.7-0.1,1.2-0.4,1.7c-0.3,0.5-0.6,0.9-1,1.2S8.7,13,8.1,13.2c-0.6,0.1-1.1,0.2-1.7,0.2H0V0.3H6.2z M5.8,5.6c0.5,0,0.9-0.1,1.3-0.4C7.5,5,7.6,4.6,7.6,4c0-0.3-0.1-0.6-0.2-0.8C7.3,3.1,7.2,2.9,7,2.8C6.8,2.7,6.6,2.6,6.4,2.6S5.9,2.5,5.7,2.5H2.9v3.1H5.8z M6,11.2c0.3,0,0.6,0,0.8-0.1C7.1,11,7.3,11,7.5,10.8c0.2-0.1,0.4-0.3,0.5-0.5c0.1-0.2,0.2-0.5,0.2-0.9C8.1,8.8,8,8.3,7.6,8S6.7,7.6,6.1,7.6H2.9v3.6H6z"/>
                         <path class="st0" d="M15.7,11.2c0.4,0.4,1,0.6,1.7,0.6c0.5,0,1-0.1,1.4-0.4c0.4-0.3,0.6-0.6,0.7-0.8h2.3c-0.4,1.1-0.9,2-1.7,2.5c-0.8,0.5-1.7,0.7-2.8,0.7c-0.8,0-1.4-0.1-2-0.4c-0.6-0.2-1.1-0.6-1.5-1s-0.7-1-1-1.6c-0.2-0.6-0.3-1.3-0.3-2s0.1-1.4,0.4-2c0.2-0.6,0.6-1.2,1-1.6c0.4-0.5,0.9-0.8,1.5-1.1s1.3-0.4,2-0.4c0.8,0,1.5,0.2,2.1,0.5s1.1,0.7,1.5,1.3c0.4,0.5,0.7,1.1,0.8,1.8C22,7.9,22,8.6,22,9.3h-6.9C15.1,10.1,15.3,10.8,15.7,11.2z M18.8,6.2c-0.3-0.3-0.8-0.5-1.5-0.5c-0.4,0-0.8,0.1-1,0.2C16,6,15.7,6.2,15.6,6.4c-0.2,0.2-0.3,0.4-0.4,0.7c-0.1,0.2-0.1,0.4-0.1,0.6h4.3C19.3,7,19.1,6.5,18.8,6.2z"/>
                         <rect x="14.6" y="1" class="st0" width="5.3" height="1.3"/></svg>
                     </a>
                 </li>
-                <li class="dr" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
+                <!--li class="dr" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                     <a href="">
                         <svg version="1.1" id="dribbble" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g>
@@ -105,9 +105,9 @@
                             </g>
                         </svg>
                     </a>
-                </li>
+                </li-->
                 <li class="fb" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
-                    <a href="">            
+                    <a href="https://www.facebook.com/angle2agency/" target="_blank">            
                         <svg version="1.1" id="facebook" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="9px" height="16px" viewBox="0 0 9 16" style="enable-background:new 0 0 9 16;" xml:space="preserve">
                             <g>
                                 <path id="f_1_" class="st0" d="M5.7,16V8.7h2.4l0.4-2.8H5.7V4c0-0.8,0.2-1.4,1.4-1.4h1.5V0.1C8.4,0.1,7.5,0,6.5,0
@@ -117,7 +117,7 @@
                     </a>
                 </li>
                 <li class="ig" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
-                    <a href="">
+                    <a href="https://www.instagram.com/angle2agency/" target="_blank">
                         <svg version="1.1" id="instagram" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g>
                                 <defs>
