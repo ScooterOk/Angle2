@@ -557,6 +557,7 @@ export default {
 .process .tab-description__link {
   position: fixed;
   bottom: 63px;
+  display: none!important;
 
 }
 .process .tab-description__link a {

@@ -1213,6 +1213,7 @@ export default {
   z-index: 1;
   margin-top: 10px;
   visibility: hidden;
+  display: none!important;
 }
 .projects__details_link a {
   font-size: 18px;

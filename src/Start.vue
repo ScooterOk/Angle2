@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  props : ['mouseX'],
+  props : ['mouseX', 'gamma'],
   mounted : function () {    
     this.show = true;
     this.enter();
@@ -45,7 +45,25 @@ export default {
       if(this.mouseMove){
         var rootX = -((window.innerWidth / 2) - val);
           document.querySelectorAll('.text h2').forEach(function(el, i, arr){
-          var moveX = 100 / ((window.innerWidth / 2) / rootX);        
+          var moveX = 100 / ((window.innerWidth / 2) / rootX);
+          var x = ((window.innerWidth -  el.clientWidth ) / 2) * (moveX/100);
+          if(el.parentElement.parentElement.className == 'left'){
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(-15deg) skewX(-15deg) translateX('+x+'px)'}          
+            });  
+          }else{
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(15deg) skewX(15deg) translateX('+x+'px)'}          
+            });
+          }        
+        });
+      }
+    },
+    gamma : function (val, oldVal) {
+      if(this.mouseMove){
+        var rootX = -((window.innerWidth / 2) - val);
+        document.querySelectorAll('.text h2').forEach(function(el, i, arr){
+          var moveX = 100 / (45 / val);        
           var x = ((window.innerWidth -  el.clientWidth ) / 2) * (moveX/100);
 
           if(el.parentElement.parentElement.className == 'left'){
@@ -162,8 +180,6 @@ export default {
 }
 
 @media screen and (min-width: 1700px) {
-  .text li .text-wrapper {
-      padding-top: 90px;
-  }
+ 
 }
 </style>

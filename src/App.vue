@@ -50,8 +50,11 @@
             <!--div class="lng" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
               <a href="">Ukr</a>
             </div-->
+            <div class="menu">
+              <span>Menu</span>
+            </div>
         </header>        
-        <component ref="currentComponent" :is="global.currentComponent" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -155,7 +158,19 @@ import Projects from './Projects.vue';
 import Contacts from './Contacts.vue';
 export default {
     name: 'app',  
-    mounted : function () {        
+    mounted : function () {
+      var app = this;
+      if(window.DeviceOrientationEvent){        
+        window.addEventListener("deviceorientation", function(e){
+          if(e.gamma < -45){
+            app.gamma = -45
+          }else if(e.gamma > 45){
+            app.gamma = 45
+          }else{
+            app.gamma = e.gamma;  
+          }          
+        }, true);
+      }      
       this.init();
     },  
     components : {
@@ -171,20 +186,21 @@ export default {
     },
     methods : {
         init : function(e){
-            var app = this;
-            TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng', document.querySelectorAll('.follow-us li')], { y: 35});
+            var app = this;            
+            if(window.innerWidth <= 800)app.mobile = true;
+            TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng', 'header .menu span', document.querySelectorAll('.follow-us li')], { y: 35});
             TweenMax.set('.follow-us_title span', { y: 10});
             TweenMax.set('.g-pager div', { x: -35});
             TweenMax.set(['header', '.g-pager', '.follow-us'], {opacity : 1});
             TweenMax.set('.cursor-ring', {x : (window.innerWidth / 2) - 30, y : (window.innerHeight / 2) -30});        
-            TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
+            TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': app.mobile ? '10px' : '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {y : 12, opacity : 1});
             TweenMax.to('.preloader', 1.3, { height: '50%', ease: Power1.easeOut, onComplete : function(){
                 TweenMax.to('.cursor-ring circle', 0.7, {css : {'stroke-dashoffset':'0'}, onComplete : function(){
                   app.cursor.initDone = true;
                   TweenMax.to(app.$data, 1.3, { preloaderNumber : 100, ease: Power1.easeOut});                            
                   TweenMax.to([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], 1, {y : 0, ease: Power1.easeOut});
-                  TweenMax.to('.preloader', 1.3, { height: '100%', ease: Power1.easeOut, onComplete : function(){
+                  TweenMax.to('.preloader', 1.3, { height: '100%', ease: Power1.easeOut, onComplete : function(){                    
                     var name = app.$route.name;
                     switch (name) {
                       case 'home':
@@ -235,7 +251,7 @@ export default {
           if(app.initDone){
             this.$refs.currentComponent.leave().then(function(){
               TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
-              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
               TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
                 TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
                 TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});              
@@ -243,7 +259,7 @@ export default {
                   TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
                   TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
                   TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                  TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                  TweenMax.to('.preloader', 0.7, {height: 90, y : (app.mobile ? -50 : -70), ease: Power3.easeOut});
                   app.global.currentComponent = 'home';
                   app.global.page = 'home';
                   app.global.pager = '01';
@@ -258,11 +274,12 @@ export default {
             app.global.currentComponent = 'home';
             app.global.page = 'home';
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-            TweenMax.to('.preloader', 1.3, {height: 90, y : -70, ease: Power3.easeOut, onComplete : function(){
+            TweenMax.to('.preloader', 1.3, {height: 90, y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
               TweenMax.to('.g-pager div', 0.4, {x : 0});
               TweenMax.to('.logo', 0.4, {y : 0});
               TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
-                TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
+                  TweenMax.to('header .menu span', 0.3, {y : 0});
+                  TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);                
                 TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                 app.initDone = true;
                 app.transitionPage = false;
@@ -296,7 +313,7 @@ export default {
               }});
             }else{
               this.$refs.currentComponent.leave().then(function(){
-                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
                 TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
                   TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
                   TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
@@ -556,7 +573,7 @@ export default {
             }else{
               if(!app.cursor.longAnimateDone){
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                TweenMax.to('.preloader', 0.6, {y : -70, height : '90px', ease: Power2.easeIn});
+                TweenMax.to('.preloader', 0.6, {y : (app.mobile ? -50 : -70), height : '90px', ease: Power2.easeIn});
                 TweenMax.to('.progress-ring__circle', 0.6, {strokeDashoffset : 0, ease: Power2.easeIn, onComplete : function(){
                   TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'transition-duration' : '0.9s'}});
                   TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
@@ -584,7 +601,7 @@ export default {
         }
     },
     watch : {
-      $route : function(c, p){        
+      $route : function(c, p){
         var app = this;        
         var name = c.name;
         console.log(c.name);
@@ -612,7 +629,7 @@ export default {
           default:
             // statements_def
             break;
-        }        
+        }
       }
     },
     data () {
@@ -622,11 +639,13 @@ export default {
             msg: 'Welcome to Your Vue.js App',
             transitionPage : false,
             scroll : false,
+            mobile : false,
+            gamma : 0,
             global : {
                 currentComponent : '',
                 pager : '01',
                 mouseX : 0,
-                mouseY : 0,
+                mouseY : 0,                
                 page : ''                
             },
             cursor : {
@@ -754,6 +773,20 @@ header .lng {
   position: absolute;
   margin-top: 66px;
   right: 70px;
+}
+header .menu {
+  position: absolute;
+  margin-top: 25px;
+  right: 25px;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 300;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  display: none;
+}
+header .menu span {
+  display: inline-block;
 }
 header a {
   color: #1d1d1d;
@@ -991,9 +1024,34 @@ header .logo #logo .st0,
   opacity: 0.7;
 }
 
+/*
 @media screen and (max-width: 1024px) {
   .mobile-coming {
     display: flex;
+  }
+}
+*/
+@media screen and (max-width: 800px) {
+  header nav,
+  .g-pager,
+  .follow-us {
+    display: none;
+  }
+  header {    
+    padding: 0 25px 10px 25px;    
+  }
+  header .logo {
+    margin-top: 25px;
+  }
+  header .menu {
+    display: block;
+  }
+  .dda {    
+    left: 14px;
+    top: 70px;    
+  }
+  .go-tonext {    
+    bottom: 138px;    
   }
 }
 
