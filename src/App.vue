@@ -54,7 +54,11 @@
             <div class="menu">
               <span @click="menuShow">{{menuText}}</span>
             </div>
-        </header>        
+        </header>
+        <!-- <h1 style="position: fixed; top: 30px;">{{alpha}}</h1>
+        <h1 style="position: fixed; top: 60px;">{{beta}}</h1>
+        <h1 style="position: fixed; top: 90px;">{{gammaa}}</h1>
+        <h1 style="position: fixed; top: 120px;">{{gamma}}</h1>-->
         <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
@@ -164,12 +168,80 @@ export default {
       var app = this;      
       if(window.DeviceOrientationEvent){        
         window.addEventListener("deviceorientation", function(e){
-          if(e.gamma < -45){
-            app.gamma = -45
-          }else if(e.gamma > 45){
-            app.gamma = 45
+          app.alpha = e.alpha;
+          app.beta = e.beta;
+          app.gammaa = e.gamma;
+          var w = window.innerWidth;
+          var h = window.innerHeight;
+          if(w > h){
+            if(window.orientation == 90){
+              if(e.gamma < 0){
+                if(e.beta < -45){
+                  app.gamma = -45
+                }else if(e.beta > 45){
+                  app.gamma = 45
+                }else{
+                  app.gamma = e.beta;
+                }
+              }else{
+                if(e.beta < 0){
+                  if(e.beta > -135){
+                    app.gamma = -45
+                  }else{
+                    app.gamma = -(e.beta + 180);
+                  }  
+                }else{
+                  if(e.beta < 135){
+                    app.gamma = 45
+                  }else{
+                    app.gamma = 180 - e.beta;
+                  }  
+                }              
+              }
+            }else if(window.orientation == -90){
+              if(e.gamma > 0){
+                if(e.beta > 45){
+                  app.gamma = -45
+                }else if(e.beta < -45){
+                  app.gamma = 45
+                }else{
+                  app.gamma = -(e.beta);
+                }
+              }else{
+                if(e.beta > 0){
+                  if(e.beta < 135){
+                    app.gamma = -45
+                  }else{
+                    app.gamma = e.beta - 180;
+                  }  
+                }else{
+                  if(e.beta > -135){
+                    app.gamma = 45
+                  }else{
+                    app.gamma = e.beta + 180;
+                  }  
+                }              
+              }
+            }
           }else{
-            app.gamma = e.gamma;  
+            if(e.beta < 90){
+              if(e.gamma < -45){
+                app.gamma = -45
+              }else if(e.gamma > 45){
+                app.gamma = 45
+              }else{
+                app.gamma = e.gamma;
+              }
+            }else{
+              if(e.gamma < -45){
+                app.gamma = +45
+              }else if(e.gamma > 45){
+                app.gamma = -45
+              }else{
+                app.gamma = -e.gamma;
+              }
+            }
+            
           }          
         }, true);
       }      
@@ -253,7 +325,7 @@ export default {
         home : function(){
           var app = this;
           app.transitionPage = true;
-          if(app.initDone){
+          if(app.initDone){            
             this.$refs.currentComponent.leave().then(function(){
               TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
@@ -317,6 +389,15 @@ export default {
                 }});
               }});
             }else{
+              if(app.mobile){
+                TweenMax.to('#app-menu', 0.7, {opacity : 0, onComplete : function(){
+                  app.menu = false;  
+                }});                
+                TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+                  app.menuText = 'Menu';
+                  TweenMax.to('header .menu span', 0.7, {y : 0});
+                }});
+              }
               this.$refs.currentComponent.leave().then(function(){
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
                 TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
@@ -673,7 +754,10 @@ export default {
             mobile : false,
             menu : false,
             menuText : 'Menu',
+            alpha : 0,
+            beta : 0,
             gamma : 0,
+            gammaa : 0,
             global : {
                 currentComponent : '',
                 pager : '01',

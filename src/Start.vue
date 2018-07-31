@@ -1,6 +1,28 @@
 <template>
-  <div id="app-start" v-resize="onResize">
-    <ul class="text">
+  <div id="app-start" v-resize="onResize">    
+    <ul class="text portrait" v-if="portrait">
+      <li class="left">
+        <div class="text-wrapper">          
+          <h2 ref="l1">{{text.mobile.row1}}</h2>
+          <h2 ref="l2">{{text.mobile.row2}}</h2>
+          <h2 ref="l3">{{text.mobile.row3}}</h2>
+          <h2 ref="l4">{{text.mobile.row4}}</h2>
+          <h2 ref="l5">{{text.mobile.row5}}</h2>
+          <h2 ref="l6">{{text.mobile.row6}}</h2>
+        </div>
+      </li>
+      <li class="right">
+        <div class="text-wrapper">
+          <h2 ref="r1">{{text.mobile.row1}}</h2>
+          <h2 ref="r2">{{text.mobile.row2}}</h2>
+          <h2 ref="r3">{{text.mobile.row3}}</h2>
+          <h2 ref="r4">{{text.mobile.row4}}</h2>
+          <h2 ref="r5">{{text.mobile.row5}}</h2>
+          <h2 ref="r6">{{text.mobile.row6}}</h2>
+        </div>
+      </li>
+    </ul>
+    <ul class="text" v-else>
       <li class="left">
         <div class="text-wrapper">          
           <h2 ref="l1">{{text.desktop.row1}}</h2>
@@ -17,7 +39,8 @@
           <h2 ref="r4">{{text.desktop.row4}}</h2>
         </div>
       </li>
-    </ul>    
+    </ul>
+
   </div>    
 </template>
 
@@ -28,9 +51,12 @@ export default {
   directives: {
       resize
   },
-  mounted : function () {    
-    this.show = true;
+  created : function(){
     this.orientation();
+    console.log(this.portrait);
+  },
+  mounted : function () {    
+    this.show = true;    
     this.enter();
 
   },
@@ -55,7 +81,7 @@ export default {
           row6 : 'ent angle'
         },
       },
-      portrait : false,
+      portrait : undefined,
       mouseMove : true
     }
   },
@@ -100,21 +126,25 @@ export default {
   },  
   methods : {    
     enter: function () {
-        var app = this;        
-        TweenMax.fromTo([this.$refs.l1, this.$refs.l3], 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-        TweenMax.fromTo([this.$refs.r1, this.$refs.r3], 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-        TweenMax.fromTo([this.$refs.l2, this.$refs.l4], 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-        TweenMax.fromTo([this.$refs.r2, this.$refs.r4], 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        var app = this;
+        
+          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        
+        console.log(app.portrait);
+        console.log(app.$refs.r5);        
     },
     leave: function () {
       var app = this;
       return new Promise(function(resolve, reject) {
         resolve();
         app.mouseMove = false;
-        TweenMax.to([app.$refs.l1, app.$refs.l3], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([app.$refs.r1, app.$refs.r3], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([app.$refs.l2, app.$refs.l4], 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
-        TweenMax.to([app.$refs.r2, app.$refs.r4], 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(odd)'), 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(odd)'), 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .left h2:nth-child(even)'), 0.6, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)'}, ease: Power2.easeIn});
+        TweenMax.to(document.querySelectorAll('.text .right h2:nth-child(even)'), 0.6, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)'}, ease: Power2.easeIn});
       });        
     },
     longLeave : function(){      
@@ -182,7 +212,7 @@ export default {
     width: 50%;
     right: 0;
 }
-.text li .text-wrapper {
+#app-start .text li .text-wrapper {
     text-align: left;
     padding: 120px 5vw 0 5vw;
 }
@@ -203,6 +233,10 @@ export default {
     display: table;
     margin: auto;    
 }
+.portrait .text-wrapper h2 {
+    font-size: 13.7vw;
+    line-height: 10.5vw;
+}
 .text li.left .text-wrapper h2 {
     color: #2af8eb;
     transform: rotate(-15deg) skewX(-15deg) translateX(0px);
@@ -213,7 +247,18 @@ export default {
     transform: rotate(15deg) skewX(15deg) translateX(0px);
 }
 
-@media screen and (min-width: 1700px) {
- 
+@media screen and (max-width: 800px) {
+  #app-start .text li .text-wrapper {
+    text-align: left;
+    padding: 65px 5vw 0 5vw;
+  }
+  #app-start .text.portrait li .text-wrapper {
+    text-align: left;
+    padding: 120px 5vw 0 5vw;
+  }
+  .text-wrapper h2 {
+    font-size: 8.7vw;    
+    line-height: 6.7vw;    
+  }
 }
 </style>

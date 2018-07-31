@@ -11,7 +11,6 @@ import Process from './Process.vue';
 import Projects from './Projects.vue';
 import Contacts from './Contacts.vue';
 
-console.log(Menu);
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.http.options.emulateJSON = true;

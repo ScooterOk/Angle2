@@ -2,40 +2,20 @@
   <div id="app-menu" v-resize="onResize" :class="album ? 'album' : ''">
     <div class="menu__bg_left"></div>
     <div class="menu__bg_right"></div>
-    <ul class="text">
-      <li class="left">
-        <div class="text-wrapper">          
-          <h2 ref="l1">
-            <a href="">{{row1}}</a>
-          </h2>
-          <h2 ref="l2">
-            <a href="">{{row2}}</a>
-          </h2>
-          <h2 ref="l3">
-            <a href="">{{row3}}</a>
-          </h2>
-          <h2 ref="l4">
-            <a href="">{{row4}}</a>
+    <ul class="link__list" ref="list">
+      <li v-for="item in rows">
+        <div class="left">            
+          <h2>            
+            <router-link :to="item.url">{{item.title}}</router-link>
           </h2>
         </div>
-      </li>
-      <li class="right">
-        <div class="text-wrapper">
-          <h2 ref="r1">
-            <a href="">{{row1}}</a>
+        <div class="right">
+          <h2>
+            <router-link :to="item.url">{{item.title}}</router-link>
           </h2>
-          <h2 ref="r2">
-            <a href="">{{row2}}</a>
-          </h2>
-          <h2 ref="r3">
-            <a href="">{{row3}}</a>
-          </h2>
-          <h2 ref="r4">
-              <a href="">{{row4}}</a>
-            </h2>
-        </div>
-      </li>
-    </ul>
+        </div>            
+      </li>          
+    </ul>    
     <ul class="menu__social">
       <li class="be">
           <a href="https://www.behance.net/Angle2" target="_blank">
@@ -116,11 +96,25 @@ export default {
     
   },
   data () {
-    return {      
-      row1: 'Home',
-      row2: 'Process',
-      row3: 'Projects',
-      row4: 'Contact Us',
+    return {
+      rows : [
+        {
+          title: 'Home',
+          url : '/'
+        },
+        {
+          title: 'Process',
+          url : '/process'
+        },
+        {
+          title: 'Projects',
+          url : '/projects'
+        },
+        {
+          title: 'Contact Us',
+          url : '/contacts'
+        }
+      ],      
       album : false
     }
   },
@@ -132,18 +126,18 @@ export default {
       var app = this;      
       TweenMax.set(document.querySelectorAll('.menu__social li'), { y: 35});  
       TweenMax.to(['.menu__bg_left', '.menu__bg_right'], 0.7, {x : '0%', ease: Power3.easeIn, onComplete : function(){
-        var l = document.querySelectorAll('#app-menu .text h2:nth-child(odd) a');
-        var r = document.querySelectorAll('#app-menu .text h2:nth-child(even) a');  
+        var l = document.querySelectorAll('#app-menu .link__list li:nth-child(odd) a');
+        var r = document.querySelectorAll('#app-menu .link__list li:nth-child(even) a');
         l.forEach( function(e, i) {
-          var x = ((e.parentNode.clientWidth) / 2) - (e.clientWidth / 2);        
+          var x = ((e.parentNode.clientWidth - 50) / 2) - (e.clientWidth / 2);        
           TweenMax.fromTo(e, 1.5, {x : -(e.clientWidth+100)}, {x : x, visibility : 'visible', ease: Power4.easeOut});
         });
         r.forEach( function(e, i) {
-          var x = ((e.parentNode.clientWidth) / 2) - (e.clientWidth / 2);        
+          var x = ((e.parentNode.clientWidth - 50) / 2) - (e.clientWidth / 2);        
           TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, visibility : 'visible', ease: Power4.easeOut});
         });
-        TweenMax.staggerTo(document.querySelectorAll('#app-menu .text .left a'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
-        TweenMax.staggerTo(document.querySelectorAll('#app-menu .text .right a'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
+        TweenMax.staggerTo(document.querySelectorAll('#app-menu .link__list .left a'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
+        TweenMax.staggerTo(document.querySelectorAll('#app-menu .link__list .right a'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
         TweenMax.staggerTo(['.menu__social li.be', '.menu__social li.dr', '.menu__social li.fb', '.menu__social li.ig'], 0.3, {y : 0, delay : 0.9}, 0.1);  
       }});      
       
@@ -163,7 +157,7 @@ export default {
         TweenMax.to('.menu__bg_right', 0.7, {x : '100%', ease: Power3.easeIn, onComplete : function(){
           resolve();
         }});
-        TweenMax.to(document.querySelectorAll('#app-menu .text'), 0.7, {opacity : 0});
+        TweenMax.to(document.querySelectorAll('#app-menu .link__list'), 0.7, {opacity : 0});
         TweenMax.to(document.querySelectorAll('#app-menu .menu__social li'), 0.7, {y : 35});
         app.mouseMove = false;        
       });        
@@ -214,75 +208,71 @@ export default {
     transform: translate(100%, 0);
     background-color: #2af8eb;
   }
-  .text {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform: perspective(400px);    
+  .link__list {
+  list-style: none;
+  margin: 0 -1.7vw 0 -1.7vw;  
+  padding-top: calc(12vw + 120px);
+  padding-bottom: 6vw;
+  padding-left: 0;
+  padding-right: 0;
 }
-.text li {    
-    height: 100%;
-    position: absolute;
-    top: 0;
-    overflow: hidden;    
+.album .link__list {
+  padding-top: 16vw;
 }
-.text li.left {
-    width: 50%;
-    left: 0;
+.link__list li {
+  display: flex;    
+  position: relative;
+  height: 22.9vw;
+  margin-top: -13vw;
 }
-.text li.right {
-    width: 50%;
-    right: 0;
+.album .link__list li {
+  height: 19.8vw;
 }
-.text li .text-wrapper {
-    text-align: left;
-    padding: 120px 5vw 0 5vw;
-}
-.album .text li .text-wrapper {
-  padding-top: 46px;
-}
-.text li .text-wrapper {
-    width: 200%;
-}
-.text li.right .text-wrapper {
-  margin-left: -100%;
-}
-#app-menu .text-wrapper h2 {
-    font-size: 12.7vw;
-    margin: 0;
-    padding: 0;
-    line-height: 10.2vw;
-    text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: -.45vw;
-    display: block;
-    margin: auto;    
-    overflow: hidden;
-}
-#app-menu.album .text-wrapper h2 {
-    font-size: 10.7vw;
-    line-height: 8.2vw;
-}
-#app-menu .text li.left .text-wrapper h2 {    
-    color: #fff;
-    transform: rotate(-15deg) skewX(-15deg) translateX(0px);    
-}
-#app-menu .text li.left .text-wrapper h2 a {
+.link__list li .left {
+  width: 50%;
+  overflow: hidden;  
   color: #fff;
+}
+.link__list li .left a {
+  color: #fff;
+}
+.link__list li .right {
+  width: 50%;
+  overflow: hidden;  
+  color: #000;  
+}
+.link__list li .right a {
+  color: #000;   
+}
+.link__list li h2 {
+  font-size: 12.7vw;
+  margin: 0;
+  padding: 0 25px;
+  line-height: 10.2vw;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: -.45vw;
+  width: 200%;
+  cursor: pointer;
+  overflow: hidden;  
+  position: relative;
+  z-index: 1;
+}
+.album .link__list li h2 {
+  font-size: 8.7vw;
+  line-height: 8.2vw;
+}
+.link__list li h2 a {
   display: inline-block;
   visibility: hidden;
+  cursor: default;
 }
-#app-menu .text li.right .text-wrapper h2 {    
-    color: #000;
-    transform: rotate(15deg) skewX(15deg) translateX(0px);
+.link__list li .left h2 {  
+  transform: translate3d(0, 0, 0) rotate(-15deg) skewX(-15deg);
 }
-#app-menu .text li.right .text-wrapper h2 a {
-    color: #000;
-    display: inline-block;
-    visibility: hidden;
+.link__list li .right h2 {
+  margin-left: -100%;
+  transform: translate3d(0, 0, 0) rotate(15deg) skewX(15deg);
 }
 .menu__social {
   list-style: none;
