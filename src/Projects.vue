@@ -1212,8 +1212,7 @@ export default {
   right: 11vw;
   z-index: 1;
   margin-top: 10px;
-  visibility: hidden;
-  display: none!important;
+  visibility: hidden;  
 }
 .projects__details_link a {
   font-size: 18px;

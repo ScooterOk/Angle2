@@ -4,12 +4,14 @@ import {TweenMax, Power2, TimelineLite} from "gsap";
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource'
+import Menu from './Menu.vue';
 import App from './App.vue';
 import Start from './Start.vue';
 import Process from './Process.vue';
 import Projects from './Projects.vue';
 import Contacts from './Contacts.vue';
 
+console.log(Menu);
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.http.options.emulateJSON = true;

@@ -1,5 +1,5 @@
 <template>
-    <div id="app" @mousemove="cursorRing" :class="global.page" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">
+    <div id="app" @mousemove="cursorRing" @touchstart="touchmove" @touchmove="touchmove" @touchend="touchmove" :class="global.page" @mousedown="longClick" @mouseup="longClick" @mousewheel="mousewheel">
         <div class="mobile-coming">
           <div>
             <img src="./assets/img/short_logo_white.svg" alt="">
@@ -9,12 +9,13 @@
         <svg class="cursor-ring" width="60" height="60" @mouseenter="cursorRingHover">
             <circle class="progress-ring__circle" stroke="white" stroke-width="1" fill="transparent" r="24" cx="30" cy="30"/>
         </svg>
+        <mobile-menu ref="menu" v-if="menu"></mobile-menu>
         <div class="preloader">
             <div>
               <span>{{preloaderPercent}}%</span>  
             </div>            
         </div>
-        <header>
+        <header :class="menu ? 'menu':''">
             <div class="logo" @mouseenter="hoverLinks" @mouseleave="hoverLinks">
                 <router-link to="/">
                   <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -51,7 +52,7 @@
               <a href="">Ukr</a>
             </div-->
             <div class="menu">
-              <span>Menu</span>
+              <span @click="menuShow">{{menuText}}</span>
             </div>
         </header>        
         <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
@@ -61,12 +62,12 @@
           </div>            
         </div>
         <div class="go-tonext" ref="goTonext">
-          <div class="go-tonext__wrapper" @click="clickNext">
+          <div class="go-tonext__wrapper">
             <div>
-              <span data-next="" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">go play</span>
+              <span data-next="" @click="clickNext" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">go play</span>
             </div>
             <div>
-              <span data-next="" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">outside</span>
+              <span data-next="" @click="clickNext" @mouseenter="hoverLinks($event);hoverNext($event)" @mouseleave="hoverLinks($event);hoverNext($event)">outside</span>
             </div> 
           </div>                    
         </div>
@@ -152,6 +153,7 @@
 </template>
 
 <script>
+import Menu from './Menu.vue';
 import Start from './Start.vue';
 import Process from './Process.vue';
 import Projects from './Projects.vue';
@@ -159,7 +161,7 @@ import Contacts from './Contacts.vue';
 export default {
     name: 'app',  
     mounted : function () {
-      var app = this;
+      var app = this;      
       if(window.DeviceOrientationEvent){        
         window.addEventListener("deviceorientation", function(e){
           if(e.gamma < -45){
@@ -174,10 +176,11 @@ export default {
       this.init();
     },  
     components : {
-        'home' : Start,
-        'process' : Process,
-        'projects' : Projects,
-        'contacts' : Contacts
+      'mobile-menu' : Menu,
+      'home' : Start,
+      'process' : Process,
+      'projects' : Projects,
+      'contacts' : Contacts
     },
     computed: {
         preloaderPercent: function() {
@@ -186,7 +189,9 @@ export default {
     },
     methods : {
         init : function(e){
+
             var app = this;            
+            console.log(app);
             if(window.innerWidth <= 800)app.mobile = true;
             TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng', 'header .menu span', document.querySelectorAll('.follow-us li')], { y: 35});
             TweenMax.set('.follow-us_title span', { y: 10});
@@ -274,7 +279,7 @@ export default {
             app.global.currentComponent = 'home';
             app.global.page = 'home';
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-            TweenMax.to('.preloader', 1.3, {height: 90, y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
+            TweenMax.to('.preloader', 1.3, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
               TweenMax.to('.g-pager div', 0.4, {x : 0});
               TweenMax.to('.logo', 0.4, {y : 0});
               TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
@@ -485,13 +490,21 @@ export default {
             app.scroll = false;           
           }
         },
-        cursorRing : function(e){            
+        touchmove : function(e){
+          var app = this;
+          if(!app.global.touch){
+            app.global.touch = true;
+            TweenMax.to('.progress-ring__circle', 0.7, {strokeDashoffset : 150.796});
+          }
+        },
+        cursorRing : function(e){
+          var app = this;          
           this.global.mouseX = e.pageX;
           this.global.mouseY = e.pageY;
-          if(this.cursor.initDone){
+          if(this.cursor.initDone && !app.global.touch){
             TweenMax.to('.cursor-ring', 0.5, {x : (e.clientX - 30), y : (e.clientY - 30)});
           }          
-        },
+        },        
         cursorRingHover : function(e){
           e.preventDefault();
         },
@@ -552,7 +565,7 @@ export default {
         },
         longClick : function(e){          
           var app = this;
-          if(app.initDone && !app.cursor.hoverActive && !app.transitionPage && app.cursor.longAnimatePermit){
+          if(app.initDone && !app.cursor.hoverActive && !app.transitionPage && app.cursor.longAnimatePermit && !app.global.touch){
             if(e.type == 'mousedown'){              
               app.cursor.longAnimateDone = false;
               TweenMax.to('.cursor-ring', 0.2, {scale : 1.5});
@@ -598,7 +611,26 @@ export default {
             return false;
           }
           e.preventDefault();
-        }
+        },
+        menuShow : function(e){
+          var app = this;
+          if(app.menu){
+            app.$refs.menu.leave().then(function(){
+              app.menu = false;  
+            });                        
+            TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+              app.menuText = 'Menu';
+              TweenMax.to('header .menu span', 0.7, {y : 0});
+            }});
+          }else{
+            app.menu = true;            
+            TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+              app.menuText = 'Close';
+              TweenMax.to('header .menu span', 0.7, {y : 0});
+            }});
+            
+          }
+        } 
     },
     watch : {
       $route : function(c, p){
@@ -635,18 +667,20 @@ export default {
     data () {
         return {            
             preloaderNumber : 0,
-            initDone : false,
-            msg: 'Welcome to Your Vue.js App',
+            initDone : false,            
             transitionPage : false,
             scroll : false,
             mobile : false,
+            menu : false,
+            menuText : 'Menu',
             gamma : 0,
             global : {
                 currentComponent : '',
                 pager : '01',
                 mouseX : 0,
                 mouseY : 0,                
-                page : ''                
+                page : '',
+                touch : false
             },
             cursor : {
                 initDone : false,
@@ -740,6 +774,9 @@ header {
   z-index: 5;
   opacity: 0;
   overflow: hidden;
+}
+header.menu {
+  z-index: 10;
 }
 header .logo {
   margin-top: 60px;

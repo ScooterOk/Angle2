@@ -1,20 +1,20 @@
 <template>
-  <div id="app-start">        
-    <ul class="text" ref='scooterok'>
+  <div id="app-start" v-resize="onResize">
+    <ul class="text">
       <li class="left">
-        <div class="text-wrapper">
-          <h2 ref="l1">{{row1}}</h2>
-          <h2 ref="l2">{{row2}}</h2>
-          <h2 ref="l3">{{row3}}</h2>
-          <h2 ref="l4">{{row4}}</h2>
+        <div class="text-wrapper">          
+          <h2 ref="l1">{{text.desktop.row1}}</h2>
+          <h2 ref="l2">{{text.desktop.row2}}</h2>
+          <h2 ref="l3">{{text.desktop.row3}}</h2>
+          <h2 ref="l4">{{text.desktop.row4}}</h2>
         </div>
       </li>
       <li class="right">
         <div class="text-wrapper">
-          <h2 ref="r1">{{row1}}</h2>
-          <h2 ref="r2">{{row2}}</h2>
-          <h2 ref="r3">{{row3}}</h2>
-          <h2 ref="r4">{{row4}}</h2>
+          <h2 ref="r1">{{text.desktop.row1}}</h2>
+          <h2 ref="r2">{{text.desktop.row2}}</h2>
+          <h2 ref="r3">{{text.desktop.row3}}</h2>
+          <h2 ref="r4">{{text.desktop.row4}}</h2>
         </div>
       </li>
     </ul>    
@@ -22,21 +22,40 @@
 </template>
 
 <script>
+import resize from 'vue-resize-directive';
 export default {
-  props : ['mouseX', 'gamma'],
+  props : ['mouseX', 'gamma', 'mobile'],
+  directives: {
+      resize
+  },
   mounted : function () {    
     this.show = true;
+    this.orientation();
     this.enter();
+
   },
   destroyed : function(){
     
   },
   data () {
     return {
-      row1: 'look at your',
-      row2: 'product from',
-      row3: 'a different',
-      row4: 'angle',
+      text : {
+        desktop : {
+          row1: 'look at your',
+          row2: 'product from',
+          row3: 'a different',
+          row4: 'angle',    
+        },
+        mobile : {
+          row1: 'look at ',          
+          row2: 'your',
+          row3: 'product',
+          row4: 'from',
+          row5 : 'a differ-',
+          row6 : 'ent angle'
+        },
+      },
+      portrait : false,
       mouseMove : true
     }
   },
@@ -44,7 +63,7 @@ export default {
     mouseX : function (val, oldVal) {
       if(this.mouseMove){
         var rootX = -((window.innerWidth / 2) - val);
-          document.querySelectorAll('.text h2').forEach(function(el, i, arr){
+          document.querySelectorAll('#app-start .text h2').forEach(function(el, i, arr){
           var moveX = 100 / ((window.innerWidth / 2) / rootX);
           var x = ((window.innerWidth -  el.clientWidth ) / 2) * (moveX/100);
           if(el.parentElement.parentElement.className == 'left'){
@@ -78,7 +97,7 @@ export default {
         });
       }
     }
-  },
+  },  
   methods : {    
     enter: function () {
         var app = this;        
@@ -114,7 +133,22 @@ export default {
     },
     goNext : function(e){
       this.show = false;
-    }
+    },
+    onResize : function(e){
+      var app = this;
+      app.orientation();
+      console.log(app.portrait);
+    },
+    orientation: function() {        
+        var app = this;
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        if(w > h){
+          app.portrait = false;          
+        }else{
+          app.portrait = true;          
+        }          
+      }
   }
 }
 </script>
