@@ -59,7 +59,7 @@
         <h1 style="position: fixed; top: 60px;">{{beta}}</h1>
         <h1 style="position: fixed; top: 90px;">{{gammaa}}</h1>
         <h1 style="position: fixed; top: 120px;">{{gamma}}</h1>-->
-        <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" :resize="resize" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -166,7 +166,7 @@ export default {
     name: 'app',  
     mounted : function () {
       var app = this;      
-      if(window.DeviceOrientationEvent){        
+      if(window.DeviceOrientationEvent){
         window.addEventListener("deviceorientation", function(e){
           app.alpha = e.alpha;
           app.beta = e.beta;
@@ -244,7 +244,8 @@ export default {
             
           }          
         }, true);
-      }      
+      }
+      window.addEventListener("resize", app.onResize, false);
       this.init();
     },  
     components : {
@@ -253,7 +254,7 @@ export default {
       'process' : Process,
       'projects' : Projects,
       'contacts' : Contacts
-    },
+    },    
     computed: {
         preloaderPercent: function() {
             return this.preloaderNumber.toFixed(0);
@@ -325,7 +326,18 @@ export default {
         home : function(){
           var app = this;
           app.transitionPage = true;
-          if(app.initDone){            
+          if(app.initDone){  
+            if(app.mobile && app.menu){
+                TweenMax.to('#app-menu', 0.7, {opacity : 0, onComplete : function(){
+                  app.menu = false;
+                  TweenMax.set('header .menu', {clearProps : 'color'});
+                }});                
+                TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+                  app.menuText = 'Menu';
+                  TweenMax.to('header .menu span', 0.7, {y : 0});
+                }});
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#000000'});
+              }
             this.$refs.currentComponent.leave().then(function(){
               TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
@@ -336,7 +348,7 @@ export default {
                   TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
                   TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
                   TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                  TweenMax.to('.preloader', 0.7, {height: 90, y : (app.mobile ? -50 : -70), ease: Power3.easeOut});
+                  TweenMax.to('.preloader', 0.7, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut});
                   app.global.currentComponent = 'home';
                   app.global.page = 'home';
                   app.global.pager = '01';
@@ -378,7 +390,7 @@ export default {
                 TweenMax.set(app.$el, {backgroundColor : '#000000'});
                 TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                TweenMax.to('.preloader', 0.7, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut});
                 app.global.currentComponent = 'process';
                 app.global.pager = '02';
                 app.transitionPage = false;
@@ -389,27 +401,29 @@ export default {
                 }});
               }});
             }else{
-              if(app.mobile){
+              if(app.mobile && app.menu){
                 TweenMax.to('#app-menu', 0.7, {opacity : 0, onComplete : function(){
-                  app.menu = false;  
+                  app.menu = false;
+                  TweenMax.set('header .menu', {clearProps : 'color'});
                 }});                
                 TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
                   app.menuText = 'Menu';
                   TweenMax.to('header .menu span', 0.7, {y : 0});
                 }});
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#ffffff'});
               }
-              this.$refs.currentComponent.leave().then(function(){
+              this.$refs.currentComponent.leave().then(function(){                
                 TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
                 TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
                   TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-                  app.global.page = 'process';
+                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});                  
                   TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
                     TweenMax.set(app.$el, {backgroundColor : '#000000'});
                     TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent'});
                     TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                    TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut});
+                    TweenMax.to('.preloader', 0.7, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut});                    
                     app.global.currentComponent = 'process';
+                    app.global.page = 'process';
                     app.global.pager = '02';
                     app.transitionPage = false;
                     app.scroll = true;
@@ -427,10 +441,11 @@ export default {
               TweenMax.set(app.$el, {backgroundColor : '#000000'});
               TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
               TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-              TweenMax.to('.preloader', 0.7, {height: 90, y : -70, ease: Power3.easeOut, onComplete : function(){
+              TweenMax.to('.preloader', 0.7, {height: (app.mobile ? 60 : 90), y : (app.mobile ? -50 : -70), ease: Power3.easeOut, onComplete : function(){
                 TweenMax.to('.g-pager div', 0.4, {x : 0});
                 TweenMax.to('.logo', 0.4, {y : 0});
-                TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+                TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
+                  TweenMax.to('header .menu span', 0.3, {y : 0});
                   TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                   TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                   app.initDone = true;
@@ -697,20 +712,43 @@ export default {
           var app = this;
           if(app.menu){
             app.$refs.menu.leave().then(function(){
-              app.menu = false;  
+              app.menu = false;
             });                        
-            TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+            TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){              
               app.menuText = 'Menu';
+              TweenMax.set('header .menu', {clearProps : 'color'});
               TweenMax.to('header .menu span', 0.7, {y : 0});
             }});
+            if(app.global.page == 'process'){
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#ffffff'});
+              }else{
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#000000'});
+              }
           }else{
-            app.menu = true;            
+            app.menu = true;
             TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
               app.menuText = 'Close';
+              TweenMax.set('header .menu', {color : '#000'});
               TweenMax.to('header .menu span', 0.7, {y : 0});
+              if(app.global.page == 'process'){
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#000000'});
+              }else{
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#ffffff'});
+              }
             }});
             
           }
+        },
+        onResize : function(){
+          var app = this;
+          if(!app.initDone)return false;
+          app.resize.w = window.innerWidth;
+          app.resize.h = window.innerHeight;
+          if(window.innerWidth <= 800){
+           app.mobile = true; 
+          }else{
+           app.mobile = false;
+          }          
         } 
     },
     watch : {
@@ -753,11 +791,12 @@ export default {
             scroll : false,
             mobile : false,
             menu : false,
-            menuText : 'Menu',
-            alpha : 0,
-            beta : 0,
+            menuText : 'Menu',            
             gamma : 0,
-            gammaa : 0,
+            resize : {
+              w : 0,
+              h : 0
+            },           
             global : {
                 currentComponent : '',
                 pager : '01',
@@ -905,6 +944,7 @@ header .menu {
   letter-spacing: -0.5px;
   overflow: hidden;
   display: none;
+  color: #000;
 }
 header .menu span {
   display: inline-block;
@@ -1079,10 +1119,12 @@ header a,
 .g-pager,
 .go-tonext,
 header .logo #logo .st0,
+header .menu,
 #behance-logo .st0,
 #dribbble .st0,
 #facebook .st0,
-#instagram .st0 {
+#instagram .st0,
+ {
   transition: color 1s ease, fill 1s ease;
 }
 #behance-logo:hover .st0,
@@ -1102,7 +1144,8 @@ header .logo #logo .st0,
 .process header a,
 .process .dda,
 .process .g-pager,
-.process .go-tonext {
+.process .go-tonext,
+.process .menu {
   color: #fff;
 }
 .process header .logo #logo .st0,

@@ -1,11 +1,11 @@
 <template>
-  <div id="app-process" v-resize="onResize">
-      <ul class="text">
+  <div id="app-process">
+      <ul class="text" :class="portrait ? 'portrait' : ''">
         <li class="left">
           <div class="text-wrapper">
             <h2 ref="l1">              
                 <span>
-                  <i>{{row1}}</i>
+                  <i v-html="portrait ? row1Mob : row1"></i>
                 </span>
             </h2>
             <h2 ref="l2" class="l2">
@@ -26,7 +26,7 @@
           <div class="text-wrapper">
             <h2 ref="r1">
               <span>
-                  <i>{{row1}}</i>
+                  <i v-html="portrait ? row1Mob : row1"></i>
               </span>
             </h2>
             <h2 ref="r2" class="r2">
@@ -56,27 +56,28 @@
 </template>
 
 <script>
-import resize from 'vue-resize-directive';
 import Vue2Scrollbar from './Scroller.vue';
 export default {
-  props : ['mouseX', 'cursor'],
+  props : ['mouseX', 'cursor', 'gamma', 'mobile', 'resize'],
   components: {
       'scrollbar': Vue2Scrollbar
-    },
-    directives: {
-        resize
-    },
+    },    
   mounted : function () {    
     this.enter();
   },  
+  created : function(){
+    this.orientation();
+  },
   data () {
     return {
       row1: 'our focus',
+      row1Mob: 'focus on',
       mouseMove : true,
       tabsActive : false,
       tabsanimated : false,
       currentTab : '',
-      winWidth : 0,      
+      winWidth : 0,
+      portrait : undefined,
       tabs : {
         current : {
           show : false,
@@ -114,6 +115,12 @@ export default {
     }
   },
   watch : {
+    resize : {
+      handler: function (val, oldVal) {        
+        this.onResize(val);
+      },
+      deep: true
+    },
     mouseX : function (val, oldVal) {
       if(this.mouseMove){
         var rootX = -((window.innerWidth / 2) - val);
@@ -132,7 +139,27 @@ export default {
           }        
         });              
       }
-    }      
+    },
+    gamma : function (val, oldVal) {
+      console.log(val);
+      if(this.mouseMove){
+        var rootX = -((window.innerWidth / 2) - val);
+        document.querySelectorAll('.text h2').forEach(function(el, i, arr){
+          var moveX = 100 / (45 / val);        
+          var x = ((window.innerWidth -  el.clientWidth ) / 2) * (moveX/100);
+
+          if(el.parentElement.parentElement.className == 'left'){
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(-15deg) skewX(-15deg) translateX('+x+'px)'}          
+            });  
+          }else{
+            TweenMax.to(el, 1, {
+              css : {transform : 'rotate(15deg) skewX(15deg) translateX('+x+'px)'}          
+            });
+          }        
+        });
+      }
+    }
   },
   computed : {    
     tabLinkText : function(){
@@ -184,10 +211,10 @@ export default {
       }
       
     },
-    onResize : function(){
+    onResize : function(w){
+      var app = this;
+      app.orientation();      
       if(this.tabsActive){
-
-        var app = this;
         var m;                
         var c = app.currentTab;
         if(c == 'ui'){
@@ -212,7 +239,13 @@ export default {
         TweenMax.to('.text h2 .ui', 0.1, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.085)), ease: Power4.easeInOut});
         TweenMax.to('.text h2 .lab', 0.1, {css : {transform : 'translateX(-'+((app.tabs.lab.x + labX) - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut});
         TweenMax.to('.text h2 .lab', 0.1, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.17)), ease: Power4.easeInOut});
-      }      
+      }else{
+        if(app.mobile){
+          TweenMax.set('.preloader', {height: 60, y : -50});
+        }else{
+          TweenMax.set('.preloader', {height: 90, y : -70});
+        }
+      }
       
 
 
@@ -233,7 +266,7 @@ export default {
           }          
         TweenMax.to(document.querySelectorAll('.text span:not(.'+c+')'), 0.2, {color : '#292929', ease: Power1.easeIn});
         TweenMax.to(['.text span.'+c, '.text span.dash'], 0.2, {color : '#2af8eb', ease: Power1.easeIn});
-        TweenMax.to('.text h2 .dash', 0.4, {y: -(app.tabs.dash.y - 175 - m), ease: Power4.easeInOut});
+        TweenMax.to('.text h2 .dash', 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - m), ease: Power4.easeInOut});
         TweenMax.staggerTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45, ease: Power1.easeOut}, 0.03);
         TweenMax.set('.process .tab-description__link_border', {right : 0, left : 'auto'});
         TweenMax.to('.process .tab-description__link_border', 0.5, {width : '0%', ease: Power2.easeIn, onComplete : function(){
@@ -280,8 +313,8 @@ export default {
           TweenMax.to('.preloader', 0.8, {height : 0, ease: Power4.easeInOut})
         }});
         TweenMax.to(document.querySelectorAll('.text h2 span:not(.'+c+'):not(.dash) i'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){          
-          TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});
-          TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(app.tabs.dash.x - 70)+'px)'}, ease: Power2.easeInOut, onComplete : function(){        
+          TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});          
+          TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(app.tabs.dash.x - (app.mobile ? 20 : 70))+'px)'}, ease: Power2.easeInOut, onComplete : function(){
           var m;
           if(c == 'ui'){
             m = window.innerWidth * 0.085;
@@ -290,7 +323,7 @@ export default {
           }else{
             m = 0;
           }          
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - m), ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - m), ease: Power4.easeInOut, onComplete : function(){
             app.tabsanimated = false;            
             app.tabs.current.showText = true;
             app.tabs.current.show = true;            
@@ -304,14 +337,14 @@ export default {
           }});
           TweenMax.to(['.text .ux i', '.text .ui i', '.text .lab i'], 0.37, {y : '0%', ease: Power3.easeIn, delay : 0.27});
         }});
-        TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ux.x - 70 - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ux.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175)), ease: Power4.easeInOut})
         }});
-        TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ui.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ui.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
         }});
-        TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(app.tabs.lab.x - 70 - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - 175 - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
+        TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(app.tabs.lab.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
         }});
         }});
         TweenMax.to(['.text .dash', '.text h2 .'+c], 0.15, {color : '#2af8eb'});
@@ -331,7 +364,7 @@ export default {
         TweenMax.to(document.querySelectorAll('.text h2.l2 span:not(.'+app.currentTab+'):not(.dash) i, .text h2.r2 span:not(.'+app.currentTab+'):not(.dash) i'), 0.37, {y : '100%', ease: Power3.easeIn});
 
         TweenMax.to(document.querySelectorAll('.text h2 span'), 0.4, {y: 0, ease: Power4.easeInOut, delay : 0.5, onComplete : function(){
-          TweenMax.to('.preloader', 0.8, {height : 90, ease: Power4.easeInOut, onComplete : function(){
+          TweenMax.to('.preloader', 0.8, {height : (app.mobile ? 60 : 90), ease: Power4.easeInOut, onComplete : function(){
             TweenMax.to('.g-pager div', 0.3, {x : '0%', ease: Power4.easeInOut});  
             TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
           }});
@@ -418,6 +451,16 @@ export default {
         TweenMax.to('.cursor-ring', 0.2, {scale : 1});
         TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
       }      
+    },
+    orientation: function() {        
+      var app = this;       
+      if(app.mobile){
+        if(app.resize.w < app.resize.h){
+          app.portrait = true;
+        }else{
+          app.portrait = false;
+        }          
+      }          
     }
   }
 }
@@ -595,5 +638,38 @@ export default {
   position: absolute;
   left: 0px;
   top: 50%;
+}
+@media screen and (max-width: 800px) {    
+  .process .text li .text-wrapper {
+    padding: 9vw 0 0 0;
+  }
+  .process .text.portrait li .text-wrapper {
+    padding-top: calc(50vh - (12.7vw * 2) - 6vw);
+  }
+  .process .text.portrait .text-wrapper h2 {
+    font-size: 13.7vw;
+    line-height: 11.2vw;
+    width: 90%;
+  }
+  .process .tab-description__close {
+    top: 65px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  .process .tab-description {
+    top: 85px;
+    width: calc(100vw / 2 - 50px);
+  }
+  .process .tab-description__text {
+    max-height: calc(100vh - 140px);
+  }
+  .vue-scrollbar__wrapper {
+    max-height: calc(100vh - 140px);
+  }
+  .process .tab-description__text {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 </style>

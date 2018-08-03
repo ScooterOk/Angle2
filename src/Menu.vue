@@ -293,7 +293,9 @@ export default {
 }
 
 
-@media screen and (min-width: 1700px) {
- 
+@media screen and (min-width: 800px) {
+ #app-menu {
+  display: none;
+ }
 }
 </style>

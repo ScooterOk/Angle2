@@ -1,5 +1,5 @@
 <template>
-  <div id="app-start" v-resize="onResize">    
+  <div id="app-start">
     <ul class="text portrait" v-if="portrait">
       <li class="left">
         <div class="text-wrapper">          
@@ -45,20 +45,15 @@
 </template>
 
 <script>
-import resize from 'vue-resize-directive';
 export default {
-  props : ['mouseX', 'gamma', 'mobile'],
-  directives: {
-      resize
-  },
+  props : ['mouseX', 'gamma', 'mobile', 'resize'],  
   created : function(){
     this.orientation();
-    console.log(this.portrait);
   },
-  mounted : function () {    
+  mounted : function () {
+    var app = this;
     this.show = true;    
-    this.enter();
-
+    this.enter();    
   },
   destroyed : function(){
     
@@ -82,10 +77,17 @@ export default {
         },
       },
       portrait : undefined,
-      mouseMove : true
+      mouseMove : true,
+      show : false,
     }
   },
   watch : {
+    resize : {
+      handler: function (val, oldVal) {        
+        this.onResize(val);
+      },
+      deep: true
+    },
     mouseX : function (val, oldVal) {
       if(this.mouseMove){
         var rootX = -((window.innerWidth / 2) - val);
@@ -126,15 +128,11 @@ export default {
   },  
   methods : {    
     enter: function () {
-        var app = this;
-        
-          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-          TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-          TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
-        
-        console.log(app.portrait);
-        console.log(app.$refs.r5);        
+        var app = this;        
+        TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(odd)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(-100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .left h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(-15deg) skewX(-15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});
+        TweenMax.fromTo(document.querySelectorAll('.text .right h2:nth-child(even)'), 1.5, {css : {transform : 'rotate(15deg) skewX(15deg) translateX(100vw)', opacity : '0'}}, {opacity : 1, css : {transform : 'rotate(15deg) skewX(15deg) translateX(0)', opacity : '1'},ease: Power4.easeOut});                
     },
     leave: function () {
       var app = this;
@@ -163,22 +161,27 @@ export default {
     },
     goNext : function(e){
       this.show = false;
-    },
-    onResize : function(e){
-      var app = this;
+    },    
+    onResize : function(w){
+      var app = this;      
       app.orientation();
-      console.log(app.portrait);
+      if(app.mobile){
+        TweenMax.set('.preloader', {height: 60, y : -50});
+      }else{
+        TweenMax.set('.preloader', {height: 90, y : -70});
+      }
+      
     },
     orientation: function() {        
-        var app = this;
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        if(w > h){
-          app.portrait = false;          
+      var app = this;            
+      if(app.mobile){
+        if(app.resize.w < app.resize.h){
+          app.portrait = true;
         }else{
-          app.portrait = true;          
+          app.portrait = false;
         }          
       }
+    }
   }
 }
 </script>
@@ -256,7 +259,7 @@ export default {
     text-align: left;
     padding: 120px 5vw 0 5vw;
   }
-  .text-wrapper h2 {
+  #app-start .text-wrapper h2 {
     font-size: 8.7vw;    
     line-height: 6.7vw;    
   }
