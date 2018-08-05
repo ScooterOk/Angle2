@@ -3,13 +3,13 @@
       <ul class="text" :class="portrait ? 'portrait' : ''">
         <li class="left">
           <div class="text-wrapper">
-            <h2 ref="l1">              
+            <h2 ref="l1" class="l1">              
                 <span>
                   <i v-html="portrait ? row1Mob : row1"></i>
                 </span>
             </h2>
             <h2 ref="l2" class="l2">
-              <span class="dash">&mdash;</span>
+              <span class="dash" v-html="portrait ? '-' : '&mdash;'"></span>
               <span @mouseenter="spanEnter" class="ux" @mouseleave="spanLeave" @click="activeTabs">
                 <i>ux</i>
               </span>
@@ -24,7 +24,7 @@
         </li>
         <li class="right">
           <div class="text-wrapper">
-            <h2 ref="r1">
+            <h2 ref="r1" class="r1">
               <span>
                   <i v-html="portrait ? row1Mob : row1"></i>
               </span>
@@ -58,15 +58,16 @@
 <script>
 import Vue2Scrollbar from './Scroller.vue';
 export default {
-  props : ['mouseX', 'cursor', 'gamma', 'mobile', 'resize'],
+  props : ['mouseX', 'cursor', 'gamma', 'mobile', 'resize', 'touch'],
   components: {
       'scrollbar': Vue2Scrollbar
     },    
-  mounted : function () {    
+  mounted : function () {
+    this.orientation();
     this.enter();
   },  
   created : function(){
-    this.orientation();
+    
   },
   data () {
     return {
@@ -177,7 +178,8 @@ export default {
   },
   methods : {
     spanEnter : function(e){
-      var app = this;      
+      var app = this;
+      if(app.touch) return false;
       app.$emit('longAnimatePermit', false);
       var c = e.currentTarget.className;      
       if(app.tabsActive){
@@ -312,42 +314,63 @@ export default {
         TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){
           TweenMax.to('.preloader', 0.8, {height : 0, ease: Power4.easeInOut})
         }});
-        TweenMax.to(document.querySelectorAll('.text h2 span:not(.'+c+'):not(.dash) i'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){          
-          TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});          
-          TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(app.tabs.dash.x - (app.mobile ? 20 : 70))+'px)'}, ease: Power2.easeInOut, onComplete : function(){
-          var m;
-          if(c == 'ui'){
-            m = window.innerWidth * 0.085;
-          }else if(c == 'lab'){
-            m = window.innerWidth * 0.17;
-          }else{
-            m = 0;
-          }          
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - m), ease: Power4.easeInOut, onComplete : function(){
-            app.tabsanimated = false;            
-            app.tabs.current.showText = true;
-            app.tabs.current.show = true;            
-            TweenMax.set('.tab-description', {display : 'block'});            
-            TweenMax.set(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], {left : 0, right : 'auto'});
-            TweenMax.fromTo(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], 0.7, {width : '0'}, {width : '100%', ease: Power4.easeIn, onComplete : function(){
-              TweenMax.to('.process .tab-description__close i.l', 0.4, {rotationZ : 45, ease: Power3.easeIn});              
-              TweenMax.to('.process .tab-description__close i.r', 0.4, {rotationZ : -45, ease: Power3.easeIn});
+        if(app.portrait){
+          TweenMax.to(document.querySelectorAll('.text h2.l1 span i, .text h2.r1 span i'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){
+            TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});
+            TweenMax.to(['.text h2.l2', '.text h2.r2'], 0.8, {y : -200, ease: Power4.easeInOut, onComplete : function(){
+              TweenMax.to(['.text .ux i', '.text .ui i', '.text .lab i'], 0.37, {y : '0%', ease: Power3.easeIn, delay : 0.27});
+              app.tabsanimated = false;            
+                app.tabs.current.showText = true;
+                app.tabs.current.show = true;            
+                TweenMax.set('.tab-description', {display : 'block'});            
+                TweenMax.set(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], {left : 0, right : 'auto'});
+                TweenMax.fromTo(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], 0.7, {width : '0'}, {width : '100%', ease: Power4.easeIn, onComplete : function(){
+                  TweenMax.to('.process .tab-description__close i.l', 0.4, {rotationZ : 45, ease: Power3.easeIn});              
+                  TweenMax.to('.process .tab-description__close i.r', 0.4, {rotationZ : -45, ease: Power3.easeIn});
+                }});
+                TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45}, {opacity : 1,  y:0, scale : 1, rotationY: 0, rotationZ:0, ease: Power3.easeInOut}, 0.03);
             }});
-            TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45}, {opacity : 1,  y:0, scale : 1, rotationY: 0, rotationZ:0, ease: Power3.easeInOut}, 0.03);
+          }});  
+          TweenMax.to('.text h2 .'+c, 0.15, {color : '#2af8eb'});       
+        }else{
+          TweenMax.to(document.querySelectorAll('.text h2 span:not(.'+c+'):not(.dash) i'), 0.3, {y : '100%', ease: Power4.easeIn, onComplete : function(){  
+            TweenMax.to(document.querySelectorAll('.text span:not(.'+c+'):not(.dash)'), 0.25, {color : '#fff'});
+            TweenMax.to('.text h2 .dash', 0.8, {css : {transform : 'translateX(-'+(app.tabs.dash.x - (app.mobile ? 20 : 70))+'px)'}, ease: Power2.easeInOut, onComplete : function(){
+              var m;
+              if(c == 'ui'){
+                m = window.innerWidth * 0.085;
+              }else if(c == 'lab'){
+                m = window.innerWidth * 0.17;
+              }else{
+                m = 0;
+              }          
+              TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - m), ease: Power4.easeInOut, onComplete : function(){
+                app.tabsanimated = false;            
+                app.tabs.current.showText = true;
+                app.tabs.current.show = true;            
+                TweenMax.set('.tab-description', {display : 'block'});            
+                TweenMax.set(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], {left : 0, right : 'auto'});
+                TweenMax.fromTo(['.tab-description__link_border', '.process .tab-description__close i.l', '.process .tab-description__close i.r'], 0.7, {width : '0'}, {width : '100%', ease: Power4.easeIn, onComplete : function(){
+                  TweenMax.to('.process .tab-description__close i.l', 0.4, {rotationZ : 45, ease: Power3.easeIn});              
+                  TweenMax.to('.process .tab-description__close i.r', 0.4, {rotationZ : -45, ease: Power3.easeIn});
+                }});
+                TweenMax.staggerFromTo(document.querySelectorAll('.tab-description__link span'), 0.15, {opacity : 0,  y:150, scale : 0, rotationY: 45, rotationZ:-45}, {opacity : 1,  y:0, scale : 1, rotationY: 0, rotationZ:0, ease: Power3.easeInOut}, 0.03);
+              }});
+              TweenMax.to(['.text .ux i', '.text .ui i', '.text .lab i'], 0.37, {y : '0%', ease: Power3.easeIn, delay : 0.27});
+            }});
+            TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ux.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+              TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175)), ease: Power4.easeInOut})
+            }});
+            TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ui.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+              TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
+            }});
+            TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(app.tabs.lab.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
+              TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
+            }});
           }});
-          TweenMax.to(['.text .ux i', '.text .ui i', '.text .lab i'], 0.37, {y : '0%', ease: Power3.easeIn, delay : 0.27});
-        }});
-        TweenMax.to('.text h2 .ux', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ux.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.12))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175)), ease: Power4.easeInOut})
-        }});
-        TweenMax.to('.text h2 .ui', 0.8, {css : {transform : 'translateX(-'+(app.tabs.ui.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.085)), ease: Power4.easeInOut})
-        }});
-        TweenMax.to('.text h2 .lab', 0.8, {css : {transform : 'translateX(-'+(app.tabs.lab.x - (app.mobile ? 20 : 70) - (window.innerWidth * 0.11))+'px)'}, ease: Power4.easeInOut, onComplete : function(){
-          TweenMax.to(this.target, 0.4, {y: -(app.tabs.dash.y - (app.mobile ? 65 : 175) - (window.innerWidth * 0.17)), ease: Power4.easeInOut})
-        }});
-        }});
-        TweenMax.to(['.text .dash', '.text h2 .'+c], 0.15, {color : '#2af8eb'});
+          TweenMax.to(['.text .dash', '.text h2 .'+c], 0.15, {color : '#2af8eb'});  
+        }
+        
       }      
     },
     closeTabs : function(){
@@ -452,8 +475,9 @@ export default {
         TweenMax.to('.progress-ring__circle', 0.2, {stroke : app.cursor.color});
       }      
     },
-    orientation: function() {        
-      var app = this;       
+    orientation: function() {
+      var app = this;
+      console.log(app.resize)      
       if(app.mobile){
         if(app.resize.w < app.resize.h){
           app.portrait = true;

@@ -59,7 +59,7 @@
         <h1 style="position: fixed; top: 60px;">{{beta}}</h1>
         <h1 style="position: fixed; top: 90px;">{{gammaa}}</h1>
         <h1 style="position: fixed; top: 120px;">{{gamma}}</h1>-->
-        <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" :resize="resize" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
+        <component ref="currentComponent" :is="global.currentComponent" :mobile="mobile" :gamma="gamma" :mouseX="global.mouseX" :mouseY="global.mouseY" :cursor="cursor" :resize="resize" :touch="global.touch" @longAnimatePermit="cursor.longAnimatePermit = $event" @scroll="scroll = $event"></component>
         <div class="g-pager">
           <div>
             <span>{{global.pager}}</span><b>04</b>
@@ -262,10 +262,11 @@ export default {
     },
     methods : {
         init : function(e){
-
             var app = this;            
             console.log(app);
             if(window.innerWidth <= 800)app.mobile = true;
+            app.resize.w = window.innerWidth;
+            app.resize.h = window.innerHeight;
             TweenMax.set(['.logo', document.querySelectorAll('nav div'), 'header .lng', 'header .menu span', document.querySelectorAll('.follow-us li')], { y: 35});
             TweenMax.set('.follow-us_title span', { y: 10});
             TweenMax.set('.g-pager div', { x: -35});
