@@ -167,12 +167,12 @@ export default {
     mounted : function () {
       var app = this;      
       if(window.DeviceOrientationEvent){
-        window.addEventListener("deviceorientation", function(e){
+        window.addEventListener("deviceorientation", function(e){          
           app.alpha = e.alpha;
           app.beta = e.beta;
           app.gammaa = e.gamma;
           var w = window.innerWidth;
-          var h = window.innerHeight;
+          var h = window.innerHeight;          
           if(w > h){
             if(window.orientation == 90){
               if(e.gamma < 0){
@@ -271,7 +271,7 @@ export default {
             TweenMax.set('.follow-us_title span', { y: 10});
             TweenMax.set('.g-pager div', { x: -35});
             TweenMax.set(['header', '.g-pager', '.follow-us'], {opacity : 1});
-            TweenMax.set('.cursor-ring', {x : (window.innerWidth / 2) - 30, y : (window.innerHeight / 2) -30});        
+            TweenMax.set('.cursor-ring', {x : (window.innerWidth / 2) - 30, y : (window.innerHeight / 2) -30});
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': app.mobile ? '10px' : '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
             TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {y : 12, opacity : 1});
             TweenMax.to('.preloader', 1.3, { height: '50%', ease: Power1.easeOut, onComplete : function(){
@@ -436,8 +436,7 @@ export default {
             TweenMax.set(app.$refs.mainBg, {backgroundColor : '#000000', height : '100%', width : 0, x : 0});
             TweenMax.to('.preloader span', 1.3, {y : 50});            
             TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-            TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-            app.global.page = 'process';
+            TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});            
             TweenMax.to('.preloader', 0.7, {backgroundColor : '#ffffff', ease: Power3.easeIn, onComplete : function(){
               TweenMax.set(app.$el, {backgroundColor : '#000000'});
               TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
@@ -453,6 +452,7 @@ export default {
                 }});
               }});
               app.global.currentComponent = 'process';
+              app.global.page = 'process';
               app.global.pager = '02';
               app.transitionPage = false;
               app.scroll = true;
@@ -480,6 +480,7 @@ export default {
                   TweenMax.to('.g-pager div', 0.4, {x : 0});
                   TweenMax.to('.logo', 0.4, {y : 0});
                   TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+                    TweenMax.to('header .menu span', 0.3, {y : 0});
                     TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                     TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                     app.initDone = true;
@@ -493,8 +494,19 @@ export default {
                 }});
               }});
             }else{
+              if(app.mobile && app.menu){
+                TweenMax.to('#app-menu', 0.7, {opacity : 0, onComplete : function(){
+                  app.menu = false;
+                  TweenMax.set('header .menu', {clearProps : 'color'});
+                }});                
+                TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+                  app.menuText = 'Menu';
+                  TweenMax.to('header .menu span', 0.7, {y : 0});
+                }});
+                TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#ffffff'});
+              }
               this.$refs.currentComponent.leave().then(function(){
-                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
                 TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
                   TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
                   TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
@@ -529,6 +541,7 @@ export default {
                 TweenMax.to('.g-pager div', 0.4, {x : 0});
                 TweenMax.to('.logo', 0.4, {y : 0});
                 TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){                  
+                  TweenMax.to('header .menu span', 0.3, {y : 0});
                   TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                   TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                   app.initDone = true;
@@ -544,26 +557,38 @@ export default {
           app.transitionPage = true;
           TweenMax.set(app.$refs.mainBg, {backgroundColor : '#ffffff', height : '100%', width : 0, x : 0});
           if(app.initDone){
+            if(app.mobile && app.menu){
+              TweenMax.to('#app-menu', 0.7, {opacity : 0, onComplete : function(){
+                app.menu = false;
+                TweenMax.set('header .menu', {clearProps : 'color'});
+              }});                
+              TweenMax.to('header .menu span', 0.7, {y : 35, onComplete : function(){
+                app.menuText = 'Menu';
+                TweenMax.to('header .menu span', 0.7, {y : 0});
+              }});
+              TweenMax.to(document.querySelectorAll('.process header .logo #logo .st0, .process #behance-logo .st0, .process #dribbble .st0, .process #facebook .st0, .process #instagram .st0'), 0.7, {fill : '#ffffff'});
+            }
             this.$refs.currentComponent.leave().then(function(){
-                TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
-                TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
-                  TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
-                  TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
-                  TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
-                  TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
-                    app.global.page = 'contacts';
-                    TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
-                    TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
-                    TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});
-                    TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
-                    app.global.currentComponent = 'contacts';
-                    app.global.pager = '04';
-                    app.transitionPage = false;
-                    app.scroll = false;
-                  }});
+              TweenMax.set([app.$refs.dda.querySelectorAll('span'), app.$refs.goTonext.querySelectorAll('span')], {css : {'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.505, 0.000, 0.735, 0.425)'}});
+              TweenMax.to('.preloader', 0.7, {y : 0, height : '100%', ease: Power3.easeIn, onComplete : function(){
+                TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13, delay : 0.4});
+                TweenMax.to(app.$refs.mainBg, 0.7, {width : '100%', ease: Power3.easeIn});
+                TweenMax.to(app.$refs.mainBg, 0.7, {css : {transform : 'translateX(-50vw)'}, ease: Power3.easeIn});
+                TweenMax.to('.preloader', 0.7, {backgroundColor : '#000000', ease: Power3.easeIn, onComplete : function(){
+                  app.global.page = 'contacts';
+                  TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
+                  TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
+                  var portrait = (window.innerWidth < window.innerHeight);                              
+                  TweenMax.to(document.querySelectorAll(['.dda span']), 0.4, {y : 13});                  
+                  TweenMax.to('.preloader', 0.7, {height: 0, y : 0, ease: Power3.easeOut});
+                  app.global.currentComponent = 'contacts';
+                  app.global.pager = '04';
+                  app.transitionPage = false;
+                  app.scroll = false;
                 }});
-              });
-          }else{
+              }});
+            });
+          }else{           
             TweenMax.to('.preloader span', 1.3, {y : 50});
             app.global.currentComponent = 'contacts';            
             
@@ -571,12 +596,14 @@ export default {
             app.global.page = 'contacts';            
             TweenMax.set(app.$el, {backgroundColor : '#ffffff'});
             TweenMax.set(app.$refs.mainBg, {backgroundColor : 'transparent', width : 0, height : 0});
-            TweenMax.set([app.$refs.dda.querySelectorAll('span')], {css : {'letter-spacing': '0px', 'transition-timing-function': 'cubic-bezier(0.23, 1, 0.32, 1)'}});              
+            var portrait = (window.innerWidth < window.innerHeight);                        
+            TweenMax.to(document.querySelectorAll(['.dda span']), 0.4, {y : 13});            
             TweenMax.to(app.$refs.goTonext.querySelectorAll('span'), 0.4, {y : 13});
             TweenMax.to('.preloader', 1.3, {height: 0, y : 0, ease: Power3.easeOut, onComplete : function(){
               TweenMax.to('.g-pager div', 0.4, {x : 0});
               TweenMax.to('.logo', 0.4, {y : 0});
               TweenMax.to('.follow-us_title span', 0.4, {y : 0, onComplete : function(){
+                TweenMax.to('header .menu span', 0.3, {y : 0});
                 TweenMax.staggerTo(['header .process', 'header .projects', 'header .contact', 'header .lng'], 0.3, {y : 0}, 0.1);
                 TweenMax.staggerTo(['.follow-us li.be', '.follow-us li.dr', '.follow-us li.fb', '.follow-us li.ig'], 0.3, {y : 0}, 0.1);  
                 app.initDone = true;
@@ -589,6 +616,7 @@ export default {
         },
         touchmove : function(e){
           var app = this;
+          if(e.type == 'touchmove')e.preventDefault();
           if(!app.global.touch){
             app.global.touch = true;
             TweenMax.to('.progress-ring__circle', 0.7, {strokeDashoffset : 150.796});
@@ -638,6 +666,7 @@ export default {
         },
         hoverLinks : function(e){
           var app = this;
+          if(app.global.touch)return false;
           if(app.initDone){
             if(e.type == 'mouseenter'){
               app.cursor.hoverActive = true;
@@ -652,6 +681,7 @@ export default {
         },
         hoverNext : function(e){
           var app = this;
+          if(app.global.touch)return false;
           if(app.initDone && !app.transitionPage){            
             if(e.type == 'mouseenter'){
               TweenMax.to('.preloader', 0.3, {height : 0});
@@ -741,16 +771,18 @@ export default {
           }
         },
         onResize : function(){
-          var app = this;
+          var app = this;          
           if(!app.initDone)return false;
-          app.resize.w = window.innerWidth;
-          app.resize.h = window.innerHeight;
-          if(window.innerWidth <= 800){
-           app.mobile = true; 
-          }else{
-           app.mobile = false;
-          }          
-        } 
+          setTimeout(function(){            
+            if(window.innerWidth <= 800){
+             app.mobile = true; 
+            }else{
+             app.mobile = false;
+            }
+            app.resize.w = window.innerWidth;
+            app.resize.h = window.innerHeight;
+          }, 50);
+        }        
     },
     watch : {
       $route : function(c, p){
@@ -797,7 +829,7 @@ export default {
             resize : {
               w : 0,
               h : 0
-            },           
+            },            
             global : {
                 currentComponent : '',
                 pager : '01',
@@ -887,7 +919,7 @@ b {
   font-family: 'Montserrat', sans-serif;  
   color: #1d1d1d;
   width: 100%;
-  height: 100%;  
+  height: 100%;    
 }
 header {
   width: 100%;

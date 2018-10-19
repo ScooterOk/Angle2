@@ -1,6 +1,6 @@
 <template>
-  <div id="app-projects" @mousewheel="mousewheel" v-resize="onResize">
-      <div class="projects__scene" ref="scene">
+  <div id="app-projects" @mousewheel="mousewheel">
+      <div class="projects__scene" ref="scene" :class="portrait ? 'portrait' : ''">
         <div class="projects__details__close" @click="closeDetails" @mouseenter="hoverLinks($event, '#2af8eb')" @mouseleave="hoverLinks($event, '#2af8eb')"><i class="l"></i><i class="r"></i></div>
         <div class="projects__details_client">
           <h4>
@@ -61,9 +61,10 @@
           <div>
             <span>case</span>
           </div>          
-        </div>        
-        <ul class="projects__list" ref="list">
-          <li v-for="(project, index) in projects" :data-name="project.dataName">
+        </div>
+
+        <ul class="projects__list" ref="list" @touchstart="scrollListTouch" @touchmove="scrollListTouch" @touchend="scrollListTouch">
+          <li v-for="(project, index) in projects" :data-name="project.dataName" :class="project.duble ? 'duble': ''">
             <div class="left">            
               <h2 @mouseenter="projectHover($event, project.dataName, index+1)" @mouseleave="projectHover($event, project.dataName, index+1)" @click="showDetails" :data-name="project.dataName">
                 <div class="tech">
@@ -90,12 +91,8 @@
 </template>
 
 <script>
-import resize from 'vue-resize-directive';
 export default {
-  props : ['mouseY', 'cursor'],
-  directives: {
-    resize
-  },
+  props : ['mouseY', 'cursor', 'mobile', 'resize'],  
   computed : {    
     clientText : function(){      
       var text = this.details.category.name;
@@ -173,8 +170,15 @@ export default {
     }
   },  
   mounted : function () {  
-    this.projectsListText();
-    this.enter();    
+    var app = this;    
+    if(app.mobile){
+      app.projects = app.preProjectsMobile;
+    }else{
+      app.projects = app.preProjects;
+    }
+    app.orientation();  
+    app.projectsListText();
+    app.enter();
   },
   data () {
     return {      
@@ -183,8 +187,18 @@ export default {
       scrollDetailsPermit : false,
       detailsActive : false,
       listTop : 0,
-      sceneTop : 0,      
+      sceneTop : 0,
+      portrait : undefined,
+      touch : {
+        start : 0,
+        move : 0,
+        end : 0,
+        listY : 0
+      },
       projects : [
+        
+      ],
+      preProjects : [
         {
           name : '4peak',
           dataName : '4peak',
@@ -215,6 +229,46 @@ export default {
           tech : ['ui', 'lab'],
           url : 'dist/img/projects/vishegrad.jpg'
         },
+        {
+          name : 'floston',
+          dataName : 'Floston',          
+          tech : ['ux'],
+          url : 'dist/img/projects/floston.jpg'
+        }
+      ],
+      preProjectsMobile : [
+        {
+          name : '4peak',
+          dataName : '4peak',
+          tech : ['ux', 'ui'],
+          url : 'dist/img/projects/4peak.jpg'          
+        },
+        {
+          name : 'reacti-vate',
+          dataName : 'Reaktivate',
+          tech : ['ux', 'ui', 'lab'],
+          url : 'dist/img/projects/reaktivate.jpg',
+          duble : true
+        },        
+        {
+          name : 'bonex',
+          dataName : 'Bonex',
+          tech : ['ui', 'lab'],
+          url : 'dist/img/projects/bonex.jpg'
+        },
+        {
+          name : 'bikepack',
+          dataName : 'BikePack',
+          tech : ['ui'],
+          url : 'dist/img/projects/medical.jpg'
+        },
+        {
+          name : 'vy-shegrad',
+          dataName : 'Vyshegrad',
+          tech : ['ui', 'lab'],
+          url : 'dist/img/projects/vishegrad.jpg',
+          duble : true
+        },        
         {
           name : 'floston',
           dataName : 'Floston',          
@@ -346,32 +400,62 @@ export default {
     }    
   },  
   watch : {
+    resize : {
+      handler: function (val, oldVal) {        
+        this.onResize(val);
+      },
+      deep: true
+    },
     mouseY : function (val, oldVal) {      
       if((val - 120) > 0)this.scrollList(val);        
-    }    
+    },
+    mobile : function(val){
+      var app = this;
+      if(val){
+        app.projects = app.preProjectsMobile;
+      }else{
+        app.projects = app.preProjects;
+      }      
+    }
   },  
   methods : {
-    projectsListText : function(){
-      var projects = [];
-      for(var i in this.projects){
+    projectsListText : function(){      
+      for(var i in this.preProjects){
         i = Number(i)
-        var text = this.projects[i].name;
+        var text = this.preProjects[i].name;
         var t = '';
         for(var s in text){
           if(text[s] == ' '){
             t += '<i>&nbsp</i>';
+          }else if(text[s] == '-'){
+            t += '<i>-</i><br>';
           }else{
             t += '<i>'+text[s]+'</i>';
-          }        
+          }
         }        
-        this.$set(this.projects[i], 'name', t);        
+        this.$set(this.preProjects[i], 'name', t);
+      }
+      for(var i in this.preProjectsMobile){
+        i = Number(i)
+        var text = this.preProjectsMobile[i].name;
+        var t = '';
+        for(var s in text){
+          if(text[s] == ' '){
+            t += '<i>&nbsp</i>';
+          }else if(text[s] == '-'){
+            t += '<i>-</i><br>';
+          }else{
+            t += '<i>'+text[s]+'</i>';
+          }
+        }        
+        this.$set(this.preProjectsMobile[i], 'name', t);
       }
       
     },    
-    scrollList : function(clientY){      
+    scrollList : function(clientY){
       var app = this;
       var sh = document.querySelector('.projects__scene').clientHeight;
-      var lh = document.querySelector('.projects__list').clientHeight;      
+      var lh = document.querySelector('.projects__list').clientHeight;
       if(app.scrollListPermit && lh > sh){
         var y = clientY - 120;
         var sh = app.$refs.scene.clientHeight;
@@ -383,8 +467,39 @@ export default {
         TweenMax.to(app.$refs.list, 0.6, {y : yDiff,});
       }      
     },
-    projectHover : function(e, name, slide){
+    scrollListTouch : function(e){
       var app = this;      
+      var sh = document.querySelector('.projects__scene').clientHeight;
+      var lh = document.querySelector('.projects__list').clientHeight;
+      var max = (sh - lh);
+      if(e.type == 'touchstart'){
+        app.touch.start = e.changedTouches[0].pageY;        
+      }else if(e.type == 'touchmove'){        
+        app.touch.move = e.changedTouches[0].pageY - app.touch.start;        
+        if(app.scrollListPermit && lh > sh){
+          var diff = app.listTop + app.touch.move;
+          if(diff <= 0 && diff >= max){
+            TweenMax.to(app.$refs.list, 0.35, {y : diff});            
+          }
+        }        
+      }else if(e.type == 'touchend'){
+        var diff = app.listTop + app.touch.move;        
+        if(lh > sh){
+          if(diff > 0){
+            app.listTop = 0;  
+          }else if(diff < max){
+            app.listTop = max;
+          }else{
+            app.listTop = diff;
+          }
+        }        
+        app.touch.start = 0;
+        app.touch.move = 0;
+      }
+    },
+    projectHover : function(e, name, slide){
+      var app = this;
+      if(app.mobile)return false;
       if(!app.detailsActive){
         if(app.scrollListPermit && e.target.parentNode.className != 'hover'){
           name = '.projects__details_photo [data-name="'+name+'"]';
@@ -428,13 +543,16 @@ export default {
       var app = this;
       var currentTarget = e.currentTarget;      
       var name = currentTarget.getAttribute('data-name');      
-      if(!app.detailsActive){        
+      if(!app.detailsActive){
         if(!app.initDone || app.initDone && (app.detailsActive && currentTarget.parentNode.parentNode.className == 'hover'))return false;
         app.detailsActive = true;
         app.details.caseTransition = true;
+        document.querySelectorAll('.projects__list li').forEach( function(e, i) {
+          e.classList.remove('hover');
+        });
+        currentTarget.parentNode.parentNode.classList.add('hover');
         var data = app.details.detailsCases[name];
-        var next = document.querySelector('.projects__list li[data-name="'+name+'"]+li');
-
+        var next = document.querySelector('.projects__list li[data-name="'+name+'"]+li');        
         if(next){
           app.details.current = name;
         }else{
@@ -446,12 +564,16 @@ export default {
         app.details.caseLink.url = data.fullCase;
         app.details.caseDescription.name = data.description;      
         app.scrollListPermit = false;
-        var y = currentTarget.parentNode.parentNode.offsetTop - (120 - document.querySelector('.projects__list').offsetTop - app.listTop);
-        TweenMax.set(document.querySelectorAll(['.dda span', '.case-study span', '.case-next span']), {css : {'transition-duration' : '0.7s', 'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
+        //var y = currentTarget.parentNode.parentNode.offsetTop - ((app.mobile ? 60 : 120) - document.querySelector('.projects__list').offsetTop - app.listTop);
+        var y = currentTarget.parentNode.parentNode.offsetTop - (app.mobile ? 70 : 120) + app.listTop;
+        TweenMax.set(document.querySelectorAll(['.dda span', '.case-study span', '.case-next span']), {css : {'transition-duration' : '0.7s', 'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
         TweenMax.to(document.querySelectorAll(['.dda span', '.case-study span']), 0.4, {y : 13, delay : 1, onComplete : function(){
-          TweenMax.to(document.querySelectorAll('.case-study span'), 0.4, {y : 0, opacity : 1, onComplete : function(){
-            TweenMax.set(document.querySelectorAll('.case-study span'), {css : {'transition-duration' : '0.7s', 'letter-spacing': '0px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
-          }});
+          if(!app.mobile){
+            TweenMax.to(document.querySelectorAll('.case-study span'), 0.4, {y : 0, opacity : 1, onComplete : function(){
+              TweenMax.set(document.querySelectorAll('.case-study span'), {css : {'transition-duration' : '0.7s', 'letter-spacing': '0px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
+            }});
+          }
+          
         }});
         TweenMax.to(document.querySelectorAll('.projects__list li:not(.hover) span'), 0.3, {y : '100%', ease: Power1.easeOut, onComplete : function() {
           TweenMax.set(document.querySelectorAll('.projects__list li:not(.hover)'), {visibility : 'hidden'});
@@ -488,8 +610,8 @@ export default {
             }});          
               
             TweenMax.set('.projects__details_content-description span', {opacity : 0});
-            TweenMax.to('.projects__details', 0.7, {width : '85vw', ease: Power1.easeOut, onComplete : function(){
-              var hd = 200 + ((window.innerWidth / 100) * 33.2);
+            TweenMax.to('.projects__details', 0.7, {width : app.mobile ? '100vw' : '85vw', ease: Power1.easeOut, onComplete : function(){
+              var hd = (app.mobile ? 148 : 200) + ((window.innerWidth / 100) * 33.2);
               var hc = document.querySelector('.projects__details_content-block').offsetHeight;
               TweenMax.to('.projects__details_content', 0.7, {height : hc, onComplete : function(){
                 app.scrollDetailsPermit = true;
@@ -678,7 +800,7 @@ export default {
       var app = this;      
       TweenMax.to('.projects__scene', 0.5, {y : 0});
       app.scrollDetailsPermit = false;
-      TweenMax.set(document.querySelectorAll(['.dda span', '.case-study span', '.case-next span']), {css : {'transition-duration' : '0.7s', 'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});      
+      TweenMax.set(document.querySelectorAll(['.dda span', '.case-study span', '.case-next span']), {css : {'transition-duration' : '0.7s', 'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});      
       TweenMax.to(document.querySelectorAll(['.dda span', '.case-study span', '.case-next span']), 0.4, {y : 13, delay : 1, onComplete : function(){
         TweenMax.to(document.querySelectorAll('.dda span'), 0.4, {y : 0, opacity : 1, onComplete : function(){
           TweenMax.set(document.querySelectorAll('.dda span'), {css : {'transition-duration' : '0.7s', 'letter-spacing': '0px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
@@ -756,6 +878,14 @@ export default {
         TweenMax.to('.projects__scene', 0.7, {y : -app.sceneTop});
       }      
     },
+    orientation: function() {
+      var app = this;      
+      if(window.innerWidth < window.innerHeight){
+        app.portrait = true;
+      }else{
+        app.portrait = false;
+      }      
+    },
     onResize : function(e){
       var app = this;
       if(app.detailsActive){
@@ -785,36 +915,46 @@ export default {
       TweenMax.set(document.querySelectorAll('.projects__details_photo-img'),{y : '-100%', ease: Power3.easeOut});
       
       app.$emit('longAnimatePermit', false);
-      var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
-      var r = document.querySelectorAll('.projects__list li:nth-child(even) span');
-      l.forEach( function(e, i) {
-        var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
-        TweenMax.fromTo(e, 1.5, {x : -(e.clientWidth+100)}, {x : x, ease: Power4.easeOut});
-      });
-      r.forEach( function(e, i) {
-        var x = ((e.parentNode.clientWidth - 140) / 2) - (e.clientWidth / 2);        
-        TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, ease: Power4.easeOut});
-      });
+      setTimeout(function(){
+        var l = document.querySelectorAll('.projects__list li:nth-child(odd) span');
+        var r = document.querySelectorAll('.projects__list li:nth-child(even) span');
+        TweenMax.set('.projects__list', {visibility : "visible"});
+        l.forEach( function(e, i) {
+          var x = ((e.parentNode.clientWidth - (app.mobile ? 50 : 140)) / 2) - (e.clientWidth / 2);        
+          TweenMax.fromTo(e, 1.5, {x : -(e.clientWidth+100)}, {x : x, ease: Power4.easeOut});
+        });
+        r.forEach( function(e, i) {
+          var x = ((e.parentNode.clientWidth - (app.mobile ? 50 : 140)) / 2) - (e.clientWidth / 2);        
+          TweenMax.fromTo(e, 1.5, {x : e.parentNode.clientWidth}, {x : x, ease: Power4.easeOut});
+        });
+        TweenMax.staggerTo(document.querySelectorAll('.projects__list .left span'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
+        TweenMax.staggerTo(document.querySelectorAll('.projects__list .right span'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09, droveOn);
+      }, 100);      
 
 
       TweenMax.fromTo('.projects__details', 0.7, {x : document.querySelector('.projects__details').clientWidth}, {x : 0, ease: Power4.easeIn, delay : 2, onComplete : function(){        
         TweenMax.to(document.querySelector('.projects__details_photo .current'), 0.7, {y : '0%', ease: Power3.easeOut});
       }});
       
-      TweenMax.staggerTo(document.querySelectorAll('.projects__list .left span'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09);
-      TweenMax.staggerTo(document.querySelectorAll('.projects__list .right span'), 0.7, {x : 0, ease: Power4.easeInOut, delay : 0.9}, 0.09, droveOn);
+      
       //TweenMax.to(l, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9});
       //TweenMax.to(r, 0.7, {x : 0, ease: Power4.easeIn, delay : 0.9});
       
       function droveOn(){
-        app.details.photos =  app.details.preloadPhotos;        
-        document.querySelector('.projects__list li:first-child').classList.add('hover');
-        TweenMax.to(document.querySelectorAll('.projects__list li:first-child .tech b'), 0.7, {x : '0%', ease: Power2.easeOut, delay : 0.3});
-        TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {x : (window.innerWidth / 100 * 6.2), ease: Power2.easeOut, delay : 0.3});
-        TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.7, {opacity : 0.1, color : '#000000', ease: Power2.easeOut, delay : 0.3, onComplete : function(){
+        if(app.mobile){
+          app.details.photos =  app.details.preloadPhotos;
           app.scrollListPermit = true;
           app.initDone = true;
-        }});
+        }else{
+          app.details.photos =  app.details.preloadPhotos;
+          document.querySelector('.projects__list li:first-child').classList.add('hover');
+          TweenMax.to(document.querySelectorAll('.projects__list li:first-child .tech b'), 0.7, {x : '0%', ease: Power2.easeOut, delay : 0.3});
+          TweenMax.to(document.querySelectorAll('.projects__list li:first-child span'), 0.7, {x : (window.innerWidth / 100 * 6.2), ease: Power2.easeOut, delay : 0.3});
+          TweenMax.to(document.querySelectorAll('.projects__list li:not(:first-child) span'), 0.7, {opacity : 0.1, color : '#000000', ease: Power2.easeOut, delay : 0.3, onComplete : function(){
+            app.scrollListPermit = true;
+            app.initDone = true;
+          }});          
+        }        
       }      
     },
     leave: function () {
@@ -823,7 +963,7 @@ export default {
         app.scrollListPermit = false;
         if(app.detailsActive){            
           resolve();
-          TweenMax.set(document.querySelectorAll('.case-study span'), {css : {'transition-duration' : '0.5s', 'letter-spacing': '20px', 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
+          TweenMax.set(document.querySelectorAll('.case-study span'), {css : {'transition-duration' : '0.5s', 'letter-spacing': (app.mobile ? '10px' : '20px'), 'transition-timing-function' : 'cubic-bezier(0.895, 0.03, 0.685, 0.22)'}});
           TweenMax.to(document.querySelectorAll('.projects__list li'), 0.4, {y : '-200%', opacity : 0, ease: Power4.easeInOut, delay : 0.15});
           TweenMax.to(document.querySelectorAll('.case-study span'), 0.4, {y : 13, delay : 0.7, onComplete : function(){
             TweenMax.to(document.querySelectorAll('.dda span'), 0.4, {y : 0, onComplete : function(){
@@ -862,7 +1002,7 @@ export default {
     }
 
   }
-}
+};
 </script>
 
 <style scope>
@@ -886,6 +1026,7 @@ export default {
   padding-bottom: 6vw;
   padding-left: 0;
   padding-right: 0;
+  visibility: hidden;
 }
 .projects__list li {
   display: flex;    
@@ -927,7 +1068,7 @@ export default {
   z-index: 1;
 }
 .projects__list li h2 span {
-  display: inline-block;
+  display: inline-block;  
 }
 .projects__list li h2 span i {
   display: inline-block;
@@ -1234,5 +1375,52 @@ export default {
   left: 0;  
   bottom: 0;
 }
-
+@media screen and (max-width: 800px) {  
+  .projects__list {
+    padding-top: 170px;
+  }
+  .projects__list li {
+    height: 23.7vw;
+  }
+  .projects__list li.duble {
+    height: 34.4vw;
+  }
+  .projects__list li h2 {
+    font-size: 13.7vw;
+    line-height: 10.7vw;
+    padding: 0 25px;
+  }  
+  .projects__details {
+    top: 100px;
+    width: 0;
+    overflow: hidden;
+  }  
+  .case-study {
+    left: 14px;
+    top: 70px;
+  }
+  .projects__details__close {
+    top: 125px;
+    width: 20px;
+    height: 20px;
+  }
+  .projects__details_client {
+    top: calc(100px + 33.2vw);
+  }
+  .projects__details_output,
+  .projects__details_fields,
+  .projects__details_link {
+    top: calc(100px + 33.2vw + 45px);
+  }
+  .projects__details_content {
+    top: calc(1vw * 33.2 + 100px + 200px + 55px);
+  }
+  .projects__details_content-block {
+    padding: 68px 100px 100px 15vw;
+  }
+  .projects__details_photo {
+    width: 89vw;
+    height: 49.2vw;
+  }
+}
 </style>

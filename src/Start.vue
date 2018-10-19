@@ -39,7 +39,7 @@
           <h2 ref="r4">{{text.desktop.row4}}</h2>
         </div>
       </li>
-    </ul>
+    </ul>    
 
   </div>    
 </template>
@@ -163,7 +163,7 @@ export default {
       this.show = false;
     },    
     onResize : function(w){
-      var app = this;      
+      var app = this;         
       app.orientation();
       if(app.mobile){
         TweenMax.set('.preloader', {height: 60, y : -50});
@@ -173,17 +173,15 @@ export default {
       
     },
     orientation: function() {        
-      var app = this;            
-      if(app.mobile){
-        if(app.resize.w < app.resize.h){
-          app.portrait = true;
-        }else{
-          app.portrait = false;
-        }          
+      var app = this;      
+      if(app.resize.w < app.resize.h){
+        app.portrait = true;
+      }else{
+        app.portrait = false;
       }
     }
   }
-}
+};
 </script>
 
 <style scope>

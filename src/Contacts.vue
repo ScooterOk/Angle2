@@ -1,5 +1,5 @@
 <template>
-  <div id="app-contacts" v-resize="onResize">
+  <div id="app-contacts" :class="portrait ? 'portrait' : ''">
       <ul class="contacts__title">
         <li data-type="title">
           <div class="left">
@@ -111,7 +111,6 @@
 </template>
 
 <script>
-import resize from 'vue-resize-directive';
 if (!String.prototype.trim) {
   (function() {    
     String.prototype.trim = function() {
@@ -120,19 +119,20 @@ if (!String.prototype.trim) {
   })();
 }
 export default {    
-  props : ['cursor'],
-  directives: {
-    resize
-  },
+  props : ['cursor', 'mobile', 'resize'],  
   computed : {
     
   },
   mounted : function () {
-    this.enter();
+    var app = this;
+    app.orientation();  
+    app.enter();
+    console.log(app);
   },
   data () {
     return {
       initDone : false,
+      portrait : undefined,
       title : 'Let\'s meet',
       thankYou : false,
       thankYouTitle : 'thank you',
@@ -156,7 +156,12 @@ export default {
     }
   },
   watch : {
-    
+    resize : {
+      handler: function (val, oldVal) {        
+        this.onResize(val);
+      },
+      deep: true
+    },
   },
   methods : {
     inputFocusBlur : function(e){
@@ -222,11 +227,11 @@ export default {
       }      
     },
     formSubmit : function(e){
-      e.preventDefault();
+      var app = this;      
+      e.preventDefault();      
       var name = e.target.querySelector('input[name="name"]').value.trim();
       var email = e.target.querySelector('input[name="email"]').value.trim();
       var msg = e.target.querySelector('textarea').value.trim();
-      var app = this;
       var x = document.querySelector('.contacts__title li[data-type="title"] h1 span').parentNode.clientWidth;
       var th = document.querySelector('.contacts__title li[data-type="thankyou"] h1 span');      
       if(!name.length){
@@ -250,11 +255,13 @@ export default {
         TweenMax.to('.contacts__from-message .error', 0.5, {y : '0%', ease: Power3.easeInOut});
         app.form.msg.error = true;
       }
-      if(!name.length || !email.length || !msg.length)return false;
-      
+      if(!name.length || !email.length || !msg.length)return false;      
+      app.scrollTop(app.$el, 0, 200);
       TweenMax.set(document.querySelectorAll('.contacts__title li[data-type="thankyou"]'), {visibility : 'visible'});
       TweenMax.to(document.querySelectorAll('.contacts__title li[data-type="title"] h1 span'), 1.5, {x : x, ease: Power4.easeInOut});
-      TweenMax.fromTo(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), 1.5, {x : -(th.clientWidth+100)}, {x : 0, ease: Power4.easeInOut});
+      TweenMax.fromTo(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), 1.5, {x : -(th.clientWidth+100)}, {x : 0, ease: Power4.easeInOut, onComplete : function(){
+        TweenMax.to(document.querySelectorAll('.contacts__title li:not([data-type="thankyou"]) h1 span'), 1, {opacity : 0});
+      }});
       TweenMax.to(['.contacts__wrapper_side'], 1, {opacity : 0, onComplete : function(){
         TweenMax.set(['.contacts__wrapper_side.form'], {display : 'none'});
         TweenMax.set('.contacts__thankyou', {display : 'block'});
@@ -282,7 +289,41 @@ export default {
       
     },
     onResize : function(e){
+      var app = this;
+      app.orientation();
+    },
+    orientation: function() {      
       var app = this;      
+      if(window.innerWidth < window.innerHeight){
+        app.portrait = true;        
+      }else{
+        app.portrait = false;        
+      }      
+    },
+    scrollTop : function(element, to, duration){
+      var start = element.scrollTop,
+        change = to - start,
+        currentTime = 0,
+        increment = 20;   
+        //t = current time
+        //b = start value
+        //c = change in value
+        //d = duration
+        var easeInOutQuad = function (t, b, c, d) {
+          t /= d/2;
+          if (t < 1) return c/2*t*t + b;
+          t--;
+          return -c/2 * (t*(t-2) - 1) + b;
+        };     
+        var animateScroll = function(){        
+            currentTime += increment;
+            var val = easeInOutQuad(currentTime, start, change, duration);
+            element.scrollTop = val;
+            if(currentTime < duration) {
+                setTimeout(animateScroll, increment);
+            }
+        };
+        animateScroll();        
     },
     enter: function () {
       var app = this; 
@@ -314,16 +355,18 @@ export default {
         if(app.thankYou){
           var t = document.querySelector('.contacts__title li[data-type="thankyou"] h1 span');
           TweenMax.to('.contacts__thankyou', 0.5, {opacity : 0, onComplete : function(){
+            TweenMax.to(document.querySelectorAll(['.dda span']), 0.4, {y : 0});            
             resolve();
             TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
             TweenMax.to(document.querySelectorAll('.contacts__title li[data-type="thankyou"] h1 span'), 1.5, {x : -(t.clientWidth+100), ease: Power4.easeOut});
           }});
-
-          
         }else{
           var t = document.querySelector('.contacts__title h1 span');
           TweenMax.to(document.querySelectorAll(['.contacts__wrapper_side-list h2 span', '.contacts__wrapper_side-info span', '.contacts__from-send button span']), 0.5, {y : '100%'});
           TweenMax.to(document.querySelectorAll(['.contacts__from-name label', '.contacts__from-name input', '.contacts__from-mail label', '.contacts__from-mail input', '.contacts__from-message label', '.contacts__from-message textarea']), 0.5, {opacity : 0, onComplete : function(){
+            var portrait = (window.innerWidth < window.innerHeight);                    
+            TweenMax.to(document.querySelectorAll(['.dda span']), 0.4, {y : 0});
+            
             resolve();
             TweenMax.to(document.querySelectorAll('.go-tonext span'), 0.3, {y : '0%', ease: Power4.easeInOut});
             TweenMax.to(document.querySelectorAll(['.contacts__from-name i', '.contacts__from-mail i', '.contacts__from-message i']), 0.5, {width : '0%'})
@@ -333,7 +376,7 @@ export default {
       });  
     }
   }
-}
+};
 </script>
 
 <style scope>
@@ -661,5 +704,67 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
+}
+@media screen and (max-width: 800px) {
+  #app-contacts.portrait {
+    overflow: auto;
+    padding-bottom: 60px;
+  }
+  .contacts__wrapper_side-list {
+    width: 100%;
+  }
+  .contacts__title li h1 {
+    padding: 0 25px;
+  }
+  .portrait .contacts__title li {
+    height: 23.3vw;
+  }
+  .portrait .contacts__title li h1 {
+    font-size: 14.5vw;
+    line-height: 11.2vw;
+  }
+  .portrait .contacts__title li[data-type="thankyou"] h1 {
+    font-size: 13.7vw;
+    line-height: 14.2vw;
+  }
+  .contacts__title {
+    padding-top: 30px;
+  }
+  .portrait .contacts__title {
+    padding-top: 60px; 
+    margin: 0;
+  }  
+  .contacts__wrapper {
+    margin: 20px 25px 0 25px;
+  }  
+  .portrait .contacts__wrapper {
+    flex-direction: column;
+  }
+  .portrait .contacts__wrapper_side {
+    width: 100%;
+    padding-top: 0;
+  }
+  .portrait .contacts__wrapper_side-list li {
+    margin-bottom: 30px;
+  }
+  .portrait .contacts__wrapper_side.form {
+    flex-direction: column;
+  }
+  .portrait .contacts__from-name {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 15px;
+  }
+  .portrait .contacts__from-mail {
+    width: 100%;
+    padding-left: 0;
+  }
+  .portrait .contacts__from-message {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  .portrait .contacts__from-send {
+    align-self: flex-start;
+  }
 }
 </style>
